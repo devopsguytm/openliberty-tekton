@@ -131,10 +131,10 @@ kubectl get pods --namespace tekton-pipelines
 
 2. create tekton CRDs :
 ```
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml -n tekton-pipelines 
 ```
 
 3. create <API_KEY> for IBM Cloud :
@@ -148,7 +148,7 @@ kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io
 
 4. create / update service account to allow pipeline run :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml 
 ```
 
 5. execute pipeline :
@@ -170,7 +170,7 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
-Create Tekton WebHooks  for GitHub or GitLab
+# IBM Kubernetes 1.16 -> Create Tekton WebHooks  for GitHub or GitLab
 
 
 Tekton Trigers, Bindings & EventListeners :
@@ -190,7 +190,7 @@ kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers
 
 2. create SA and roles
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml -n tekton-pipelines 
 ```
 
 3. create pipeline's trigger_template, trigger_binding & envent_listener ( in Tekton namespace ! )
@@ -201,13 +201,16 @@ kubectl get pods -n tekton-pipelines
 kubectl get nodes -o wide
 ```
 
-4. crate a webhook in GitHub / GitLab using PUBLIC_IP & github-listener-interceptor Node Port
+4. crate a WebHook in GitHub / GitLab using PUBLIC_IP & github-listener-interceptor Node Port
 
 ![GitHub WebHook](./ci-cd-pipeline/webhook.jpg?raw=true "GitHub WebHook") 
 
 
+5. perform a push in GitHub
 
-Experimental  :   Tekton Dashboard & WebHook Extension architecture : 
+
+
+# IBM Kubernetes 1.16 -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
 
 [https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
 

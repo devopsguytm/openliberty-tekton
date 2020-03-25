@@ -8,7 +8,6 @@ spec:
     - name: liberty-pipeline-trigger
       bindings:
         - name: liberty-pipeline-binding
-        - name: message-binding
       template:
         name: liberty-pipeline-template
 ---
@@ -23,17 +22,6 @@ spec:
       value: $(body.head_commit.id)
     - name: gitrepositoryurl
       value: $(body.repository.url)
-    - name: contenttype
-      value: $(header.Content-Type)
----
-apiVersion: tekton.dev/v1alpha1
-kind: TriggerBinding
-metadata:
-  name: message-binding
-spec:
-  params:
-    - name: message
-      value: Hello from the Triggers EventListener!
 ---
 
 apiVersion: tekton.dev/v1alpha1
@@ -41,6 +29,12 @@ kind: TriggerTemplate
 metadata:
   name: liberty-pipeline-template
 spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
   resourcetemplates:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
@@ -51,8 +45,13 @@ spec:
           name: liberty-pipeline
         resources:
           - name: liberty-git
-            resourceRef:
-              name: liberty-git
+            resourceSpec:
+              type: git
+              params:
+                - name: revision
+                  value: $(params.gitrevision)
+                - name: url
+                  value: $(params.gitrepositoryurl)
           - name: liberty-image
             resourceRef:
               name: liberty-image
