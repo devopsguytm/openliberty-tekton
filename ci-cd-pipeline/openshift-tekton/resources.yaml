@@ -8,7 +8,7 @@ spec:
     - name: revision
       value: master
     - name: url
-      value: https://eu-gb.git.cloud.ibm.com/vlad.sancira/simple-liberty-app.git
+      value: https://github.com/vladsancira/openliberty-tekton.git
 ---
 
 apiVersion: tekton.dev/v1alpha1

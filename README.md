@@ -169,44 +169,63 @@ http://<CLUSTER_IP>>:32427/health
 http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
-# Optional : Create Git WebHook using Tekton 
 
-Tekton WebHook architecture : 
+Create Tekton WebHooks  for GitHub or GitLab
+
+
+Tekton Trigers, Bindings & EventListeners :
+[https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
+[https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)
+[https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md](https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md)
+
+Example :
+[https://github.com/tektoncd/triggers/tree/master/examples](https://github.com/tektoncd/triggers/tree/master/examples)
+
+
+1. install Tekton Triggers:
+official release -> [https://github.com/tektoncd/triggers/blob/master/docs/install.md](https://github.com/tektoncd/triggers/blob/master/docs/install.md)
+```
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+````
+
+2. create SA and roles
+```
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml
+```
+
+3. create pipeline's trigger_template, trigger_binding & envent_listener ( in Tekton namespace ! )
+```
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/pipeline-webhook.yaml -n tekton-pipelines 
+kubectl get svc -n tekton-pipelines
+kubectl get pods -n tekton-pipelines
+kubectl get nodes -o wide
+```
+
+4. crate a webhook in GitHub / GitLab using PUBLIC_IP & github-listener-interceptor Node Port
+
+![GitHub WebHook](./ci-cd-pipeline/webhook.jpg?raw=true "GitHub WebHook") 
+
+
+
+Experimental  :   Tekton Dashboard & WebHook Extension architecture : 
 
 [https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
 
-Tekton Trigers and Bindings :
-[https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
-[https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)
-
-
 1. install Tekton Dashboard :
-install official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
+official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
 ```
 kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml
 ```
 
-2. install Tekton Triggers:
-install official release -> [https://github.com/tektoncd/triggers/blob/master/docs/install.md](https://github.com/tektoncd/triggers/blob/master/docs/install.md)
-```
-kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
-````
-
-3. install Tekton WebHook extension :
-install official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
+2. install Tekton WebHook extension :
+official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
 
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension-release.yaml
+sed -i '' 's/LOCAL_HOSTNAME/<YOUR_HOSTNAME>/g' ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 ```
-
-4. create pipeline trigger template & pipeline trigger bindings ( in Tekton namespace ! )
-```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhook-pipeline-trigger-template.yaml -n tekton-pipelines 
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhook-pipeline-trigger-binding.yaml -n tekton-pipelines
-```
-
-5. create webhook from Tekton Dashboard :
+3. create webhook from Tekton Dashboard :
 
 ![Tekton Dashboard](./ci-cd-pipeline/dashboard.jpg?raw=true "Tekton Dashboard") 
 

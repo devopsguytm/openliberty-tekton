@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: liberty-pipeline-listener
+spec:
+  serviceAccountName: tekton-triggers-sa
+  triggers:
+    - name: liberty-pipeline-trigger
+      bindings:
+        - name: liberty-pipeline-binding
+        - name: message-binding
+      template:
+        name: liberty-pipeline-template
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: liberty-pipeline-binding
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: gitrepositoryurl
+      value: $(body.repository.url)
+    - name: contenttype
+      value: $(header.Content-Type)
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: message-binding
+spec:
+  params:
+    - name: message
+      value: Hello from the Triggers EventListener!
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: liberty-pipeline-template
+spec:
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: liberty-pipeline-run
+      spec:
+        pipelineRef:
+          name: liberty-pipeline
+        resources:
+          - name: liberty-git
+            resourceRef:
+              name: liberty-git
+          - name: liberty-image
+            resourceRef:
+              name: liberty-image
