@@ -1,0 +1,43 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: liberty-pipeline
+spec:
+  resources:
+    - name: liberty-git
+      type: git
+    - name: liberty-image
+      type: image
+  
+  tasks:
+  - name: build
+    taskRef:
+      name: s2i-java-8
+    resources:       
+      inputs:
+        - name: source
+          resource: liberty-git
+      outputs:
+        - name: image
+          resource: liberty-image
+
+  - name: test
+    taskRef:
+      name: test-liberty-app
+    runAfter:
+      - build
+    resources:
+      inputs:
+        - name: source
+          resource: liberty-git
+
+  - name: deploy
+    taskRef:
+      name: deploy-liberty-app
+    runAfter:
+      - test
+    resources:
+      inputs:
+        - name: image
+          resource: liberty-image
+

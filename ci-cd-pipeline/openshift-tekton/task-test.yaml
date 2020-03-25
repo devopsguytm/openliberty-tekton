@@ -1,0 +1,40 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: test-liberty-app
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+  steps:
+    - name: test-code-maven
+      image: maven:3.6.3-ibmjava-8
+      command:
+        - '/bin/sh'
+        - '-c'
+      args:
+        - |-
+          mvn --version
+          java -version
+          echo '-----------------------------------------------------'
+          mvn clean test package -f ./source/pom.xml --settings ./source/.m2/settings.xml
+          echo '-----------------------------------------------------'
+          cp ./source/target/*.war /artefact/
+      volumeMounts:
+        - name: shared-storage
+          mountPath: /artefact
+    - name: test-code-sonarqube
+      image: alpine
+      command:
+        - '/bin/sh'
+        - '-c'
+      args:
+        - |-
+          ls -l /artefact/*.war
+      volumeMounts:
+        - name: shared-storage
+          mountPath: /artefact
+  volumes:
+    - name: shared-storage
+      emptyDir: {}

@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: liberty-pipeline-run
+spec:
+  pipelineRef:
+    name: liberty-pipeline
+  resources:
+    - name: liberty-git
+      resourceRef:
+         name: liberty-git
+    - name: liberty-image
+      resourceRef:
+         name: liberty-image

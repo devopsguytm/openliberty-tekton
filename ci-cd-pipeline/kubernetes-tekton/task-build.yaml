@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-liberty-app
+spec:
+
+  inputs:
+    resources:
+      - name: source
+        type: git
+
+  outputs:
+    resources:
+      - name: image
+        type: image
+
+  volumes:
+      - name: shared-storage
+        emptyDir: {}
+         
+  steps:
+     - name: build-code
+       image: maven:3.6.3-ibmjava-8
+       script: |
+         #!/usr/bin/env bash
+         set -xe
+         mvn --version 
+         java -version
+         echo '-----------------------------------------------------'
+         mvn clean deploy -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         echo '-----------------------------------------------------'         
+         cp ./source/target/*.war         /artefacts/
+         cp ./source/liberty-config/*.xml /artefacts/
+       volumeMounts:
+         - name: shared-storage
+           mountPath: /artefacts
+
+     - name: verify-code
+       image: alpine
+       script: |
+         ls -l /artefacts/*
+       volumeMounts:
+         - name: shared-storage
+           mountPath: /artefacts
+  
+     - name: create-image
+       image: gcr.io/kaniko-project/executor
+       command:
+         - /kaniko/executor
+       args:
+         - "--dockerfile=./source/ci-cd-pipeline/kubernetes-tekton/Dockerfile"
+         - "--destination=$(outputs.resources.image.url)"
+         - "--context=$(inputs.resources.source.path)/"
+       volumeMounts:
+         - name: shared-storage
+           mountPath: /workspace/source/ci-cd-pipeline/kubernetes-tekton/artefacts
