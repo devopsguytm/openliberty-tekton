@@ -142,8 +142,8 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml -n tekton-pipel
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
 
-kubectl create secret generic ibm-cr-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>
-kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io
+kubectl create secret generic ibm-cr-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>  -n tekton-pipelines
+kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io -n tekton-pipelines
 ```
 
 4. create / update service account to allow pipeline run :
@@ -218,7 +218,7 @@ kubectl get nodes -o wide
 official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
 ```
 kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard-service.yaml -n tekton-pipelines
 ```
 
 2. install Tekton WebHook extension :
