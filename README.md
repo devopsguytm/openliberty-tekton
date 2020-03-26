@@ -131,10 +131,10 @@ kubectl get pods --namespace tekton-pipelines
 
 2. create tekton CRDs :
 ```
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml -n tekton-pipelines 
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml -n tekton-pipelines 
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n tekton-pipelines 
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml
 ```
 
 3. create <API_KEY> for IBM Cloud :
@@ -142,13 +142,13 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml -n tekton-pipel
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
 
-kubectl create secret generic ibm-cr-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>  -n tekton-pipelines
-kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io -n tekton-pipelines
+kubectl create secret generic ibm-cr-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>
+kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io
 ```
 
 4. create / update service account to allow pipeline run :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml 
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml
 ```
 
 5. execute pipeline :
@@ -170,10 +170,12 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
-# IBM Kubernetes 1.16 -> Create Tekton WebHooks  for GitHub or GitLab
+
+# IBM Kubernetes 1.16 -> Create Tekton WebHooks  for Git
 
 
 Tekton Trigers, Bindings & EventListeners :
+
 [https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
 [https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)
 [https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md](https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md)
@@ -182,31 +184,49 @@ Example :
 [https://github.com/tektoncd/triggers/tree/master/examples](https://github.com/tektoncd/triggers/tree/master/examples)
 
 
-1. install Tekton Triggers:
+1. install Tekton Triggers :
 official release -> [https://github.com/tektoncd/triggers/blob/master/docs/install.md](https://github.com/tektoncd/triggers/blob/master/docs/install.md)
 ```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 ````
 
-2. create SA and roles
+2. create SA and Roles and Pipeline Resources :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml -n tekton-pipelines 
+kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml   -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml  -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n tekton-pipelines 
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml    -n tekton-pipelines 
 ```
 
-3. create pipeline's trigger_template, trigger_binding & envent_listener ( in Tekton namespace ! )
+4. create <API_KEY> for IBM Cloud :
+```
+ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
+cat key_file.json | grep apikey
+
+kubectl create secret generic ibm-cr-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY> -n tekton-pipelines 
+kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io -n tekton-pipelines 
+```
+
+5. create pipeline's trigger_template, trigger_binding & envent_listener ( in Tekton namespace ! )
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/pipeline-webhook.yaml -n tekton-pipelines 
-kubectl get svc -n tekton-pipelines
+kubectl get svc  -n tekton-pipelines
 kubectl get pods -n tekton-pipelines
 kubectl get nodes -o wide
 ```
 
-4. crate a WebHook in GitHub / GitLab using PUBLIC_IP & github-listener-interceptor Node Port
+6. crate a WebHook in GitHub / GitLab using PUBLIC_IP & github-listener-interceptor Node Port
 
 ![GitHub WebHook](./ci-cd-pipeline/webhook.jpg?raw=true "GitHub WebHook") 
 
 
-5. perform a push in GitHub
+7. perform a push in GitHub
+
+8. check pipeline :
+```
+tkn pr ls -n tekton-pipelines
+```
 
 
 
