@@ -55,19 +55,3 @@ spec:
           - name: liberty-image
             resourceRef:
               name: liberty-image
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: liberty-pipeline-listener
-  labels:
-    app: liberty-pipeline-listener
-spec:
-  type: NodePort
-  ports:
-    - port: 8080
-      name: liberty-pipeline-listener
-      nodePort: 32429
-  selector:
-    app: liberty-pipeline-listener

@@ -15,5 +15,5 @@ spec:
         - "apply"
         - "-f"
         - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy.yaml"
-        - "-n default"
-
+        - "-n"
+        - "default"
