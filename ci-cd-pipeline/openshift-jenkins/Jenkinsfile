@@ -40,7 +40,7 @@ pipeline {
     stage('checkout') {
         steps {
             echo '### Checkingout GitLab DEV_PROJECT ###'
-            git 'https://eu-gb.git.cloud.ibm.com/vlad.sancira/simple-liberty-app.git'     
+            git 'https://github.com/vladsancira/openliberty-tekton.git'
         }
     }
     stage('compile') {

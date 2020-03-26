@@ -19,7 +19,7 @@ spec:
   source:
     type: Git
     git:
-      uri: 'https://eu-gb.git.cloud.ibm.com/vlad.sancira/simple-liberty-app.git'
+      uri: 'https://github.com/vladsancira/openliberty-tekton.git'
   triggers:
     - type: GitLab
       gitlab:
