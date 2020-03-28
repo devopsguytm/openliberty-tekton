@@ -135,7 +135,7 @@ kubectl create namespace env-dev
 kubectl create namespace env-ci
 ```
 
-2. create tekton CRDs :
+2. create Tekton CRDs :
 ```
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml   -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml  -n env-ci
@@ -154,7 +154,7 @@ kubectl annotate secret ibm-cr-secret  -n env-ci tekton.dev/docker-0=us.icr.io
 
 4. create service account to allow pipeline run and deploy to env-dev namespace :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml -n env-ci
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml         -n env-ci
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -n env-dev
 ```
 
