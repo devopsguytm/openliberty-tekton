@@ -7,14 +7,19 @@
 Authors Service APIs - > [http://simple-liberty-app-ci-development.apps.us-west-1.starter.openshift-online.com/openapi/ui/](http://simple-liberty-app-ci-development.apps.us-west-1.starter.openshift-online.com/openapi/ui/)
 
 `.s2i/bin`               folder contains custom s2i scripts for assembling and running the application image.
+
 `.m2/settings.xml`       folder contains custom Maven settings.xml config file.
+
 `liberty-config`         folder contains the Open Liberty server.xml config file.
 
 `openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the build config with pipeline strategy.
+
 `openshift-tekton`       folder contains the OpenShift pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
+
 `kubernetes-tekton`      folder contains the Kubernetes pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
 
-# Create application image using S2I (source to image) and deploy it 
+
+# OpenShift v4.3 -> Create application image using S2I (source to image) and deploy it 
 
 OC commands:
 
@@ -49,6 +54,7 @@ oc set probe dc/simple-liberty-app --liveness --get-url=http://:9080/ --initial-
 oc patch dc/simple-liberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 ```
 
+
 # OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
 
 Prerequisites : 
@@ -77,44 +83,6 @@ tkn p ls
 tkn start liberty-pipeline
 ```
 3. open URI in browser :  
-http://<OCP_CLUSTER_HOSTNAME>/health
-
-# OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
-
-Prerequisites : 
-- Installed Jenkins template
-- Allow jenkins SA to make deploys on other projects :
-```
-oc policy add-role-to-user edit system:serviceaccount:default:jenkins -n ci-development
-```
-
-OC commands:
-
-1. create build configuration resurce in OpenShift :
-```
-oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml 
-```
-
-2. create secret for GitLab integration : 
-```
-oc create secret generic gitlabkey --from-literal=WebHookSecretKey=5f345f345c345
-```
-
-3. add webkook to GitLab from Settings->Integration : 
-
-https://<OCP_CLUSTER_HOSTNAME>/apis/build.openshift.io/v1/namespaces/ci-development/buildconfigs/liberty-pipeline-ci-cd/webhooks/5f345f345c345/gitlab
-
-4. start pipeline build or push files into GitLab repo : 
-```
-oc start-build bc/liberty-pipeline-ci-cd
-```
-
-5. get routes for  simple-springboot-app : 
-```
-oc get routes/simple-liberty-app
-```
-
-6. open URI in browser : 
 http://<OCP_CLUSTER_HOSTNAME>/health
 
 
@@ -168,7 +136,7 @@ kubectl get pipelinerun -n env-ci -w
 
 7. check pods and logs :
 ```
-kubectl get pods -n env-dev
+kubectl get pods                             -n env-dev
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
@@ -261,6 +229,8 @@ tkn pr ls -n env-ci
 
 !!! for some unknown reason the triggered pipeline can not push image to IBM Repo !!!
 
+
+
 # IBM Kubernetes 1.16 -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
 
 [https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
@@ -283,3 +253,42 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 
 ![Tekton Dashboard](./ci-cd-pipeline/dashboard.jpg?raw=true "Tekton Dashboard") 
 
+
+
+# OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
+
+Prerequisites : 
+- Installed Jenkins template
+- Allow jenkins SA to make deploys on other projects :
+```
+oc policy add-role-to-user edit system:serviceaccount:default:jenkins -n ci-development
+```
+
+OC commands:
+
+1. create build configuration resurce in OpenShift :
+```
+oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml 
+```
+
+2. create secret for GitLab integration : 
+```
+oc create secret generic gitlabkey --from-literal=WebHookSecretKey=5f345f345c345
+```
+
+3. add webkook to GitLab from Settings->Integration : 
+
+https://<OCP_CLUSTER_HOSTNAME>/apis/build.openshift.io/v1/namespaces/ci-development/buildconfigs/liberty-pipeline-ci-cd/webhooks/5f345f345c345/gitlab
+
+4. start pipeline build or push files into GitLab repo : 
+```
+oc start-build bc/liberty-pipeline-ci-cd
+```
+
+5. get routes for  simple-springboot-app : 
+```
+oc get routes/simple-liberty-app
+```
+
+6. open URI in browser : 
+http://<OCP_CLUSTER_HOSTNAME>/health
