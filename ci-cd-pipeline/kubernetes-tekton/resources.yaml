@@ -9,7 +9,6 @@ spec:
       value: master
     - name: url
       value: https://github.com/vladsancira/openliberty-tekton.git
-
 ---
 
 apiVersion: tekton.dev/v1alpha1
