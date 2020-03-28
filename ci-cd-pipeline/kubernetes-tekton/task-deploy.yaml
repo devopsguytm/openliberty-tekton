@@ -16,4 +16,4 @@ spec:
         - "-f"
         - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy.yaml"
         - "-n"
-        - "ci-dev"
+        - "env-dev"
