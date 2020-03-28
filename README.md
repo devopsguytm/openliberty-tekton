@@ -121,6 +121,8 @@ http://<OCP_CLUSTER_HOSTNAME>/health
 
 # IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
 
+![Tekton Architecture](./ci-cd-pipeline/architecture.jpg?raw=true "Tekton Architecture") 
+
 kubektl commands:
 
 1. install Tekton pipelines in tekton-pipelines namespace :
@@ -188,7 +190,7 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
-# IBM Kubernetes 1.16 -> Create Tekton WebHooks  for Git
+# IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
 
 
 Tekton Trigers, Bindings & EventListeners :
@@ -208,13 +210,13 @@ kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers
 kubectl get pods --namespace tekton-pipelines
 ````
 
-2. create SA and Roles and Pipeline Resources :
+2. create ServiceAccount, Role and RoleBinding  :
 ```
-kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml -n env-ci
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding-webhook.yaml -n env-ci
+kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml         -n env-ci
+kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-binding-webhook.yaml -n env-ci
 ```
 
-3. create pipeline's trigger_template, trigger_binding & envent_listener ( in Tekton namespace ! )
+3. create Pipeline's trigger_template, trigger_binding & event_listener :
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/pipeline-run-webhook.yaml -n env-ci 
 kubectl get svc  -n env-ci 
@@ -250,13 +252,14 @@ curl -X POST \
 }'
 ```
 
-6. watch pipeline run execution and event listener logs:
+7. watch pipeline run execution and event listener logs:
 ```
 kubectl logs el-liberty-pipeline-listener-7c77666cf7-hzkbf -n env-ci -f
 kubectl get pipelinerun -n env-ci -w
 tkn pr ls -n env-ci
 ```
 
+!!! for some unknown reason the triggered pipeline can not push image to IBM Repo !!!
 
 # IBM Kubernetes 1.16 -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
 
