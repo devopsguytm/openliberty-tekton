@@ -3,6 +3,7 @@ kind: PipelineRun
 metadata:
   name: liberty-pipeline-run
 spec:
+  serviceAccountName: pipeline-run-sa
   pipelineRef:
     name: liberty-pipeline
   resources:

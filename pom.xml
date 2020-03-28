@@ -70,5 +70,7 @@
 			  <id>ibm-cloud-repo-snapshots</id>
 			  <url>http://159.122.175.116:32324/repository/ibm-cloud-repo-snapshots/</url>
 		    </snapshotRepository>
-        </distributionManagement>		      
+        </distributionManagement>
+
+
 </project>

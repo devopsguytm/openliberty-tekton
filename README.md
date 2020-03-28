@@ -123,18 +123,24 @@ http://<OCP_CLUSTER_HOSTNAME>/health
 
 kubektl commands:
 
-1. install Tekton pipelines :
+1. install Tekton pipelines in tekton-pipelines namespace :
 ```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
 kubectl get pods --namespace tekton-pipelines
 ```
 
+2. create new env-dev and env-ci namespaces :
+```
+kubectl create namespace env-dev
+kubectl create namespace env-ci
+```
+
 2. create tekton CRDs :
 ```
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml 
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml   -n env-ci
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml  -n env-ci
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n env-ci
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml    -n env-ci
 ```
 
 3. create <API_KEY> for IBM Cloud :
@@ -142,23 +148,29 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
 
-kubectl create secret generic ibm-cr-secret --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>
-kubectl annotate secret ibm-cr-secret tekton.dev/docker-0=us.icr.io
+kubectl create secret generic ibm-cr-secret  -n env-ci --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>
+kubectl annotate secret ibm-cr-secret  -n env-ci tekton.dev/docker-0=us.icr.io
 ```
 
-4. create / update service account to allow pipeline run :
+4. create service account to allow pipeline run and deploy to env-dev namespace :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml
-```
-
-5. execute pipeline :
-```
-tkn t ls
-tkn p ls
-tkn start liberty-pipeline
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml -n env-ci
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -n env-dev
 ```
 
-6. open browser with cluster IP and port 32427 :
+5. execute pipeline via Pipeline Run and watch :
+```
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline-run.yaml -n env-ci
+kubectl get pipelinerun -n env-ci -w
+```
+
+6. check pods and logs :
+```
+kubectl get pods -n env-ci
+kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-ci
+```
+
+7. open browser with cluster IP and port 32427 :
 get Cluster Public IP :
 ```
 kubectl get nodes -o wide
