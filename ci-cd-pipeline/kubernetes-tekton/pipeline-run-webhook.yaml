@@ -3,7 +3,7 @@ kind: EventListener
 metadata:
   name: liberty-pipeline-listener
 spec:
-  serviceAccountName: tekton-triggers-sa
+  serviceAccountName: pipeline-trigger-sa
   triggers:
     - name: liberty-pipeline-trigger
       bindings:
@@ -40,6 +40,7 @@ spec:
       kind: PipelineRun
       metadata:
         name: liberty-pipeline-run
+        serviceAccountName: pipeline-run-sa
       spec:
         pipelineRef:
           name: liberty-pipeline
