@@ -53,6 +53,26 @@ spec:
       volumeMounts:
         - name: envparams
           mountPath: /env-params
+    - name: maven-build
+      image: maven:3.6.3-ibmjava-8
+      workingdir: /workspace/source
+      command:
+        - '/bin/sh'
+        - '-c'
+      args:
+        - |-
+          mvn --version 
+          java -version
+          echo '-----------------------------------------------------'
+          mvn clean package -f /workspace/source/pom.xml --settings /workspace/source/.m2/settings.xml
+          echo '-----------------------------------------------------'         
+          cp /workspace/source/target/*.war         /gen-source
+          cp /workspace/source/liberty-config/*.xml /gen-source
+      volumeMounts:
+        - name: gen-source
+          mountPath: /gen-source
+        - name: envparams
+          mountPath: /env-params      
     - name: generate
       image: quay.io/openshift-pipeline/s2i
       workingdir: /workspace/source
