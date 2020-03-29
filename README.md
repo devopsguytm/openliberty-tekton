@@ -240,34 +240,45 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 # OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
 
 Prerequisites : 
-- Installed Jenkins template
-- Allow jenkins SA to make deploys on other projects :
-```
-oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
-```
+- Create new CI project : env-ci and DEV project : env-dev
+- Deploy OCP Jenkins template in project : env-ci
+- Allow jenkins SA to make deploys on other projects
 
 OC commands:
 
-1. create build configuration resurce in OpenShift :
+1. create projects :
 ```
-oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml   -n env-ci
+oc new-project env-ci
+oc new-project env-dev
+oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
-2. create secret for GitHub integration : 
+2. create build configuration resurce in OpenShift : 
+```
+oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml  -n env-ci
+```
+
+3. create secret for GitHub integration : 
 ```
 oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
-3. add WebHook to GitHub from Settings -> WebHook : 
+4. add WebHook to GitHub from Settings -> WebHook : 
 
 ![Webhook](./ci-cd-pipeline/webhook.jpg?raw=true "Webhook") 
 
-4. start pipeline build or push files into GitHub repo : 
+
+5. start pipeline build or push files into GitHub repo : 
 ```
 oc start-build bc/liberty-pipeline-ci-cd -n env-ci
 ```
 
-5. inspect build :
+6. get routes for simple-nodejs-app : 
+```
+oc get routes/liberty-jenkins -n env-dev
+```
+
+7. inspect build :
 
 ![Jenkins](./ci-cd-pipeline/jenkins.jpg?raw=true "Jenkins") 
 
