@@ -19,43 +19,10 @@ Authors Service APIs - > [http://simple-liberty-app-ci-development.apps.us-west-
 `kubernetes-tekton`      folder contains the Kubernetes pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
 
 
-# OpenShift v4.3 -> Create application image using S2I (source to image) and deploy it 
-
-OC commands:
-
-1.  delete all resources
-```
-oc delete all -l build=simple-liberty-app
-oc delete all -l app=simple-liberty-app
-```
-
-2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
-```
-oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=simple-liberty-app --binary=true --strategy=source 
-```
-
-3.  create application image from srouce
-```
-oc start-build bc/simple-liberty-app --from-dir=. --wait=true --follow=true
-```
-
-4.  create application based on imagestreamtag : simple-liberty-app:latest
-```
-oc new-app -i simple-liberty-app:latest
-oc expose svc/simple-liberty-app
-oc label dc/simple-liberty-app app.kubernetes.io/name=java
-```
-
-
-5.  set readiness and livness probes , and change deploy strategy to Recreate
-```
-oc set probe dc/simple-liberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
-oc set probe dc/simple-liberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
-oc patch dc/simple-liberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
-```
-
 
 # OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
+
+![Pipeline Run](./ci-cd-pipeline/pipeline.jpg?raw=true "Pipeline Run") 
 
 Prerequisites : 
 - Install OpenShift Pipeline Operator
@@ -299,3 +266,41 @@ oc get routes/simple-liberty-app
 
 6. open URI in browser : 
 http://<OCP_CLUSTER_HOSTNAME>/health
+
+
+
+
+# OpenShift v4.3 -> Create application image using S2I (source to image) and deploy it 
+
+OC commands:
+
+1.  delete all resources
+```
+oc delete all -l build=simple-liberty-app
+oc delete all -l app=simple-liberty-app
+```
+
+2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
+```
+oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=simple-liberty-app --binary=true --strategy=source 
+```
+
+3.  create application image from srouce
+```
+oc start-build bc/simple-liberty-app --from-dir=. --wait=true --follow=true
+```
+
+4.  create application based on imagestreamtag : simple-liberty-app:latest
+```
+oc new-app -i simple-liberty-app:latest
+oc expose svc/simple-liberty-app
+oc label dc/simple-liberty-app app.kubernetes.io/name=java
+```
+
+
+5.  set readiness and livness probes , and change deploy strategy to Recreate
+```
+oc set probe dc/simple-liberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
+oc set probe dc/simple-liberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
+oc patch dc/simple-liberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+```

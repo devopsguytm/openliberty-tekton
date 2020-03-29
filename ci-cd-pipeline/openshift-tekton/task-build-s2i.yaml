@@ -65,14 +65,16 @@ spec:
           java -version
           echo '-----------------------------------------------------'
           mvn clean package -f /workspace/source/pom.xml --settings /workspace/source/.m2/settings.xml
-          echo '-----------------------------------------------------'         
-          cp /workspace/source/target/*.war         /gen-source
-          cp /workspace/source/liberty-config/*.xml /gen-source
+          echo '-----------------------------------------------------'
+          mkdir /tmp/src/target
+          mkdir /tmp/src/liberty-config
+          cp /workspace/source/target/*.war         /tmp/src/target/
+          cp /workspace/source/liberty-config/*.xml /tmp/src/liberty-config/
+          ls -lR /tmp/src/
       volumeMounts:
-        - name: gen-source
-          mountPath: /gen-source
-        - name: envparams
-          mountPath: /env-params      
+        - name: artefacts
+          mountPath: /tmp/src/
+
     - name: generate
       image: quay.io/openshift-pipeline/s2i
       workingdir: /workspace/source
@@ -89,9 +91,11 @@ spec:
         - '/env-params/env-file'
       volumeMounts:
         - name: gen-source
-          mountPath: /gen-source
+          mountPath: /tmp/src/
         - name: envparams
           mountPath: /env-params
+        - name: artefacts
+          mountPath: /tmp/src/
     - name: build
       image: quay.io/buildah/stable:v1.11.0
       workingdir: /gen-source
@@ -117,4 +121,6 @@ spec:
     - name: gen-source
       emptyDir: {}
     - name: envparams
+      emptyDir: {}
+    - name: artefacts
       emptyDir: {}
