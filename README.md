@@ -20,6 +20,7 @@ Authors Service APIs - > [http://simple-liberty-app-ci-development.apps.us-west-
 
 
 
+
 # OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
 
 ![Pipeline Run](./ci-cd-pipeline/pipeline.jpg?raw=true "Pipeline Run") 
@@ -54,10 +55,11 @@ oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
 ```
 tkn t ls -n env-ci
 tkn p ls -n env-ci
-tkn start liberty-pipeline -n env-ci
+tkn p start liberty-pipeline -n env-ci
 ```
 3. open URI in browser :  
 http://<OCP_CLUSTER_HOSTNAME>/health
+
 
 
 
@@ -129,6 +131,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekto
 ```
 
 http://<CLUSTER_IP>>:32428/#/pipelineruns
+
 
 
 
@@ -205,6 +208,7 @@ tkn pr ls -n env-ci
 
 
 
+
 # IBM Kubernetes 1.16 -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
 
 [https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
@@ -235,19 +239,19 @@ Prerequisites :
 - Installed Jenkins template
 - Allow jenkins SA to make deploys on other projects :
 ```
-oc policy add-role-to-user edit system:serviceaccount:default:jenkins -n ci-development
+oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
 OC commands:
 
 1. create build configuration resurce in OpenShift :
 ```
-oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml 
+oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml   -n env-ci
 ```
 
 2. create secret for GitLab integration : 
 ```
-oc create secret generic gitlabkey --from-literal=WebHookSecretKey=5f345f345c345
+oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
 3. add webkook to GitLab from Settings->Integration : 

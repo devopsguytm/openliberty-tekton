@@ -27,13 +27,15 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |-
+            oc tag $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION)
             oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
             if [[ $? -ne 0 ]]
             then
-                oc new-app -i $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+                oc new-app -i $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION) -n $(inputs.params.DEPLOY_PROJECT)
             else
-                echo "Application already exists."
+                echo "Application already exists. Deploying version=$(inputs.params.APP_VERSION)"
             fi
+            oc patch dc/$(inputs.params.APP_NAME) -p '{"spec":{"strategy":{"type":"Recreate"}}}' -n $(inputs.params.DEPLOY_PROJECT)
       - name: expose-app
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
