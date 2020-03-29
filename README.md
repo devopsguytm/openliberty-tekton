@@ -1,4 +1,4 @@
-# Open Liberty Application for OpenShift 4.X & IBM Kubernetes with Tekton Pipelines
+# Open Liberty Application for OpenShift 4.3+ & IBM Kubernetes 1.16+ with Tekton Pipelines
 
 [Open Liberty image](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
 
@@ -21,7 +21,7 @@ Authors Service APIs - > [http://simple-liberty-app-ci-development.apps.us-west-
 
 
 
-# OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
+# OpenShift v4.3+ -> CI-CD with OpenShift Pipelines 
 
 ![Pipeline Run](./ci-cd-pipeline/pipeline.jpg?raw=true "Pipeline Run") 
 
@@ -66,7 +66,7 @@ http://<OCP_CLUSTER_HOSTNAME>/health
 
 
 
-# IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
+# IBM Kubernetes 1.16+ -> CI-CD with Tekton Pipeline 
 
 ![Tekton Architecture](./ci-cd-pipeline/architecture.jpg?raw=true "Tekton Architecture") 
 
@@ -141,7 +141,7 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
-# IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
+# IBM Kubernetes 1.16+ -> Create Tekton WebHooks for Git
 
 
 Tekton Trigers, Bindings & EventListeners :
@@ -215,7 +215,7 @@ tkn pr ls -n env-ci
 
 
 
-# IBM Kubernetes 1.16 -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
+# IBM Kubernetes 1.16+ -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
 
 [https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
 
@@ -237,7 +237,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 
 
 
-# OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
+# OpenShift v4.2+ -> CI-CD with Jenkins Pipeline 
 
 Prerequisites : 
 - Create new CI project : env-ci and DEV project : env-dev
@@ -283,7 +283,7 @@ oc get routes/liberty-jenkins -n env-dev
 ![Jenkins](./ci-cd-pipeline/jenkins.jpg?raw=true "Jenkins") 
 
 
-# OpenShift v4.3 -> Create application image using S2I (source to image) and deploy it 
+# OpenShift v4.2+ -> Create application image using S2I (source to image) and deploy it 
 
 OC commands:
 
