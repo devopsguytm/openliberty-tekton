@@ -111,6 +111,7 @@ pipeline {
                     openshift.withProject("${DEV_PROJECT}"){  
                         if (openshift.selector("dc",APP_NAME).exists()) {
                             openshift.set("env dc/${APP_NAME} BUILD_NUMBER=${BUILD_NUMBER}")
+                            openshift.set("env dc/${APP_NAME} APP_VERSION=${APP_VERSION}")
                         }    
                         if (!openshift.selector("route",APP_NAME).exists()) {
                             openshift.selector("svc",APP_NAME).expose()

@@ -16,7 +16,7 @@ spec:
           value: "env-prod"
         - name: APP_NAME
           value: "liberty-jenkins"
-        - name: APP_NAME
+        - name: APP_VERSION
           value: "1.0"
   source:
     type: Git
