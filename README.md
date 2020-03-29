@@ -31,14 +31,17 @@ Prerequisites :
 ```
 oc new-project env-ci
 oc new-project env-dev
+oc new-project env-test
 
 oc create serviceaccount pipeline -n env-ci
 
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-dev
+oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-test
 
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-dev
+oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-test
 ```
 
 OC commands:

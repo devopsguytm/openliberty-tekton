@@ -65,7 +65,7 @@ spec:
         args:
           - |-
             oc set probe dc/$(inputs.params.APP_NAME) --remove --readiness --liveness -n $(inputs.params.DEPLOY_PROJECT)
-            oc set probe dc/$(inputs.params.APP_NAME) --readiness --get-url=http://:9080/ --initial-delay-seconds=30 -n $(inputs.params.DEPLOY_PROJECT)
+            oc set probe dc/$(inputs.params.APP_NAME) --readiness --get-url=http://:9080/ --initial-delay-seconds=60 -n $(inputs.params.DEPLOY_PROJECT)
       - name: set-app-autoscale
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
