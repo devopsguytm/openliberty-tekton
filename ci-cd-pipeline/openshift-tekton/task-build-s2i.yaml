@@ -74,7 +74,6 @@ spec:
       volumeMounts:
         - name: artefacts
           mountPath: /tmp/src/
-
     - name: generate
       image: quay.io/openshift-pipeline/s2i
       workingdir: /workspace/source
@@ -91,7 +90,7 @@ spec:
         - '/env-params/env-file'
       volumeMounts:
         - name: gen-source
-          mountPath: /tmp/src/
+          mountPath: /gen-source
         - name: envparams
           mountPath: /env-params
         - name: artefacts
