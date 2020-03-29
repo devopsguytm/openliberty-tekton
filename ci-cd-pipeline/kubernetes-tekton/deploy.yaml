@@ -35,3 +35,5 @@ spec:
         image: us.icr.io/cloud-images/liberty-app:latest
         ports:
         - containerPort: 9080
+      imagePullSecrets:
+        - name: default-us-icr-io
