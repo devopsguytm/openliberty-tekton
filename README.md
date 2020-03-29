@@ -227,9 +227,7 @@ official release -> [https://github.com/tektoncd/dashboard/releases](https://git
 sed -i '' 's/LOCAL_HOSTNAME/<YOUR_HOSTNAME>/g' ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 ```
-3. create webhook from Tekton Dashboard :
-
-![Tekton Dashboard](./ci-cd-pipeline/dashboard.jpg?raw=true "Tekton Dashboard") 
+3. create webhook from Tekton Dashboard 
 
 
 
@@ -249,29 +247,23 @@ OC commands:
 oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml   -n env-ci
 ```
 
-2. create secret for GitLab integration : 
+2. create secret for GitHub integration : 
 ```
 oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
-3. add webkook to GitLab from Settings->Integration : 
+3. add WebHook to GitHub from Settings -> WebHook : 
 
-https://<OCP_CLUSTER_HOSTNAME>/apis/build.openshift.io/v1/namespaces/ci-development/buildconfigs/liberty-pipeline-ci-cd/webhooks/5f345f345c345/gitlab
+![Webhook](./ci-cd-pipeline/webhook.jpg?raw=true "Webhook") 
 
-4. start pipeline build or push files into GitLab repo : 
+4. start pipeline build or push files into GitHub repo : 
 ```
-oc start-build bc/liberty-pipeline-ci-cd
-```
-
-5. get routes for  simple-springboot-app : 
-```
-oc get routes/simple-liberty-app
+oc start-build bc/liberty-pipeline-ci-cd -n env-ci
 ```
 
-6. open URI in browser : 
-http://<OCP_CLUSTER_HOSTNAME>/health
+5. inspect build :
 
-
+![Jenkins](./ci-cd-pipeline/jenkins.jpg?raw=true "Jenkins") 
 
 
 # OpenShift v4.3 -> Create application image using S2I (source to image) and deploy it 
