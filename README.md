@@ -247,7 +247,7 @@ oc delete all -l build=liberty-app
 oc delete all -l app=liberty-app
 ```
 
-2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
+2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and imagestream
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd openliberty-tekton
