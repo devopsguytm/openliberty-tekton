@@ -297,25 +297,25 @@ oc delete all -l app=simple-liberty-app
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd openliberty-tekton
-oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=simple-liberty-app --binary=true --strategy=source 
+oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
 ```
 
 3.  create application image from srouce
 ```
-oc start-build bc/simple-liberty-app --from-dir=. --wait=true --follow=true
+oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
 ```
 
 4.  create application based on imagestreamtag : simple-liberty-app:latest
 ```
-oc new-app -i simple-liberty-app:latest
-oc expose svc/simple-liberty-app
-oc label dc/simple-liberty-app app.kubernetes.io/name=java
+oc new-app -i openliberty-app:latest
+oc expose svc/openliberty-app
+oc label dc/openliberty-app app.kubernetes.io/name=java
 ```
 
 
 5.  set readiness and livness probes , and change deploy strategy to Recreate
 ```
-oc set probe dc/simple-liberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
-oc set probe dc/simple-liberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
-oc patch dc/simple-liberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
+oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
+oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 ```
