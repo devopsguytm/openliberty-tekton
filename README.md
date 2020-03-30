@@ -260,7 +260,7 @@ oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --bin
 oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
 ```
 
-4.  create application based on imagestreamtag : simple-liberty-app:latest
+4.  create application based on imagestreamtag : openliberty-app:latest
 ```
 oc new-app -i openliberty-app:latest
 oc expose svc/openliberty-app
@@ -276,7 +276,7 @@ oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 
 6. open application from 
 ```
-oc get route liberty-app
+oc get route openliberty-app
 ```
 
 
