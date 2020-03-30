@@ -297,7 +297,7 @@ oc delete all -l app=simple-liberty-app
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd openliberty-tekton
-mvn clean package -
+mvn clean package
 oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
 ```
 
