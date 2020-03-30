@@ -4,6 +4,7 @@ metadata:
   name: liberty-pipeline-listener
 spec:
   serviceAccountName: pipeline-trigger-sa
+  serviceType: NodePort
   triggers:
     - name: liberty-pipeline-trigger
       bindings:
@@ -39,20 +40,15 @@ spec:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
       metadata:
-        name: liberty-pipeline-run
+        name: liberty-pipeline-run-$(params.gitrevision)
         serviceAccountName: pipeline-run-sa
       spec:
         pipelineRef:
           name: liberty-pipeline
         resources:
           - name: liberty-git
-            resourceSpec:
-              type: git
-              params:
-                - name: revision
-                  value: $(params.gitrevision)
-                - name: url
-                  value: $(params.gitrepositoryurl)
+            resourceRef:
+              name: liberty-git
           - name: liberty-image
             resourceRef:
               name: liberty-image

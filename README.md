@@ -148,78 +148,27 @@ kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/
 kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 ```
 
-2. create ServiceAccount, Role and RoleBinding  :
+2. create ServiceAccount, Role and RoleBinding  : 
 ```
 kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/webhook-service-account.yaml  -n env-ci
 ```
 
 3. create Pipeline's trigger_template, trigger_binding & event_listener :
+! by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster !
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekton-pipelines
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n env-ci 
 ```
 
-http://<CLUSTER_IP>>:32428/#/pipelineruns
-
-4. delete old pipelinerun :
+4. get el-nodejs-pipeline-listener PORT and cluster EXTERNAL-IP
 ```
-kubectl delete pipelinerun nodejs-pipeline-run -n env-ci
-```
+kubectl get svc el-nodejs-pipeline-listener -n env-ci
+kubectl get nodes -o wide 
+``` 
 
-5. forward K8S 8080 port to localhost:8080
-```
-kubectl port-forward $(kubectl get pod -o=name -l eventlistener=nodejs-pipeline-listener -n env-ci) 8080 -n env-ci
-```
+5. add 'http://<CLUSTER_IP>>:<EVENT_LISTNER_PORT>' to GitHib as WebHook. Then perform a push.
 
-6. perform a CURL post :
-```
-curl -X POST \
-  http://localhost:8080 \
-  -H 'Content-Type: application/json' \
-  -H 'X-Hub-Signature: sha1=2da37dcb9404ff17b714ee7a505c384758ddeb7b' \
-  -d '{
-	"head_commit":
-	{
-		"id": "master"
-	},
-	"repository":
-	{
-		"url": "https://github.com/vladsancira/nodejs-tekton.git"
-	}
-}'
-```
-
-7. watch pipeline run execution and event listener logs:
-```
-kubectl logs el-nodejs-pipeline-listener-7c77666cf7-hzkbf -n env-ci -f
-kubectl get pipelinerun -n env-ci -w
-tkn pr ls -n env-ci
-```
-
-!!! for some unknown reason the triggered pipeline can not push image to IBM Repo !!!
-
-
-
-
-# IBM Kubernetes 1.16+ -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
-
-[https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
-
-1. install Tekton Dashboard :
-official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
-```
-kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard-service.yaml -n tekton-pipelines
-```
-
-2. install Tekton WebHook extension :
-official release -> [https://github.com/tektoncd/dashboard/releases](https://github.com/tektoncd/dashboard/releases)
-
-```
-sed -i '' 's/LOCAL_HOSTNAME/<YOUR_HOSTNAME>/g' ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
-```
-3. create webhook from Tekton Dashboard 
+6. open Tekton Dashboard  :  http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
