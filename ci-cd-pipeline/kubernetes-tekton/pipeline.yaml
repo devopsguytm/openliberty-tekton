@@ -8,6 +8,11 @@ spec:
       type: git
     - name: liberty-image
       type: image
+
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      description: The environment where you deploy the app
+      default: 'env-dev'
   
   tasks:
     - name: build
@@ -26,6 +31,9 @@ spec:
         name: deploy-liberty-app
       runAfter:
         - build
+      params:
+        - name: DEPLOY_ENVIRONMENT
+          value: "$(params.DEPLOY_ENVIRONMENT)"
       resources:
         inputs:
           - name: source

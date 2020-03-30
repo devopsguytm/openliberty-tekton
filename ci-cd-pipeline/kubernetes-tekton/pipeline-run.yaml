@@ -13,3 +13,6 @@ spec:
     - name: liberty-image
       resourceRef:
         name: liberty-image
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      value: 'env-dev'

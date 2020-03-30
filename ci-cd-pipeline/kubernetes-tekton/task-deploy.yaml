@@ -7,6 +7,11 @@ spec:
     resources:
       - name: source
         type: git
+    params:
+      - name: DEPLOY_ENVIRONMENT
+        description: The environment where you deploy the app
+        default: 'env-dev'
+        type: string
   steps:
     - name: deploy-app
       image: lachlanevenson/k8s-kubectl
@@ -16,4 +21,4 @@ spec:
         - "-f"
         - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy.yaml"
         - "-n"
-        - "env-dev"
+        - "$(inputs.params.DEPLOY_ENVIRONMENT)"
