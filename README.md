@@ -237,7 +237,50 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 
 
 
-# OpenShift v4.2+ -> CI-CD with Jenkins Pipeline 
+# OpenShift v4+ -> Create application image using S2I (source to image) and deploy it 
+
+OC commands:
+
+1.  delete all resources
+```
+oc delete all -l build=simple-liberty-app
+oc delete all -l app=simple-liberty-app
+```
+
+2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
+```
+git clone https://github.com/vladsancira/openliberty-tekton.git
+cd openliberty-tekton
+mvn clean package
+oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
+```
+
+3.  create application image from srouce
+```
+oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
+```
+
+4.  create application based on imagestreamtag : simple-liberty-app:latest
+```
+oc new-app -i openliberty-app:latest
+oc expose svc/openliberty-app
+oc label dc/openliberty-app app.kubernetes.io/name=java
+```
+
+5.  set readiness and livness probes , and change deploy strategy to Recreate
+```
+oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
+oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
+oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+```
+
+6. open application from 
+```
+oc get route liberty-app
+```
+
+
+# DEPRECATED : OpenShift v4.2+ -> CI-CD with Jenkins Pipeline 
 
 Prerequisites : 
 - Create new CI project : env-ci and DEV project : env-dev
@@ -281,46 +324,3 @@ oc get routes/liberty-jenkins -n env-dev
 7. inspect build :
 
 ![Jenkins](./ci-cd-pipeline/jenkins.jpg?raw=true "Jenkins") 
-
-
-# OpenShift v4.2+ -> Create application image using S2I (source to image) and deploy it 
-
-OC commands:
-
-1.  delete all resources
-```
-oc delete all -l build=simple-liberty-app
-oc delete all -l app=simple-liberty-app
-```
-
-2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
-```
-git clone https://github.com/vladsancira/openliberty-tekton.git
-cd openliberty-tekton
-mvn clean package
-oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
-```
-
-3.  create application image from srouce
-```
-oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
-```
-
-4.  create application based on imagestreamtag : simple-liberty-app:latest
-```
-oc new-app -i openliberty-app:latest
-oc expose svc/openliberty-app
-oc label dc/openliberty-app app.kubernetes.io/name=java
-```
-
-5.  set readiness and livness probes , and change deploy strategy to Recreate
-```
-oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
-oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
-oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
-```
-
-6. open application from 
-```
-oc get route liberty-app
-```
