@@ -1,4 +1,4 @@
-# Open Liberty Application for OpenShift 4.X & IBM Kubernetes with Tekton Pipelines
+# Open Liberty Application for OpenShift 4.3+ & IBM Kubernetes 1.16+ with Tekton Pipelines
 
 [Open Liberty image](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
 
@@ -21,7 +21,7 @@ Authors Service APIs - > [http://simple-liberty-app-ci-development.apps.us-west-
 
 
 
-# OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
+# OpenShift v4.3+ -> CI-CD with OpenShift Pipelines 
 
 ![Pipeline Run](./ci-cd-pipeline/pipeline.jpg?raw=true "Pipeline Run") 
 
@@ -66,7 +66,7 @@ http://<OCP_CLUSTER_HOSTNAME>/health
 
 
 
-# IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
+# IBM Kubernetes 1.16+ -> CI-CD with Tekton Pipeline 
 
 ![Tekton Architecture](./ci-cd-pipeline/architecture.jpg?raw=true "Tekton Architecture") 
 
@@ -132,7 +132,7 @@ http://<CLUSTER_IP>>:32427/health
 
 
 
-# IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
+# IBM Kubernetes 1.16+ -> Create Tekton WebHooks for Git
 
 [https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
 [https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)
@@ -201,7 +201,7 @@ tkn pr ls -n env-ci
 
 
 
-# IBM Kubernetes 1.16 -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
+# IBM Kubernetes 1.16+ -> Experimental : Tekton Dashboard & WebHook Extension architecture : 
 
 [https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md](https://github.com/tektoncd/experimental/blob/master/webhooks-extension/docs/Architecture.md)
 
@@ -223,72 +223,90 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-webhooks-extension.yaml
 
 
 
-# OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
-
-Prerequisites : 
-- Installed Jenkins template
-- Allow jenkins SA to make deploys on other projects :
-```
-oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
-```
-
-OC commands:
-
-1. create build configuration resurce in OpenShift :
-```
-oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml   -n env-ci
-```
-
-2. create secret for GitHub integration : 
-```
-oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
-```
-
-3. add WebHook to GitHub from Settings -> WebHook : 
-
-![Webhook](./ci-cd-pipeline/webhook.jpg?raw=true "Webhook") 
-
-4. start pipeline build or push files into GitHub repo : 
-```
-oc start-build bc/liberty-pipeline-ci-cd -n env-ci
-```
-
-5. inspect build :
-
-![Jenkins](./ci-cd-pipeline/jenkins.jpg?raw=true "Jenkins") 
-
-
-# OpenShift v4.3 -> Create application image using S2I (source to image) and deploy it 
+# OpenShift v4+ -> Create application image using S2I (source to image) and deploy it 
 
 OC commands:
 
 1.  delete all resources
 ```
-oc delete all -l build=simple-liberty-app
-oc delete all -l app=simple-liberty-app
+oc delete all -l build=openliberty-app
+oc delete all -l app=openliberty-app
 ```
 
-2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
+2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and imagestream
 ```
-oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=simple-liberty-app --binary=true --strategy=source 
+git clone https://github.com/vladsancira/openliberty-tekton.git
+cd openliberty-tekton
+mvn clean package
+oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
 ```
 
 3.  create application image from srouce
 ```
-oc start-build bc/simple-liberty-app --from-dir=. --wait=true --follow=true
+oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
 ```
 
-4.  create application based on imagestreamtag : simple-liberty-app:latest
+4.  create application based on imagestreamtag : openliberty-app:latest
 ```
-oc new-app -i simple-liberty-app:latest
-oc expose svc/simple-liberty-app
-oc label dc/simple-liberty-app app.kubernetes.io/name=java
+oc new-app -i openliberty-app:latest
+oc expose svc/openliberty-app
+oc label dc/openliberty-app app.kubernetes.io/name=java --overwrite
 ```
-
 
 5.  set readiness and livness probes , and change deploy strategy to Recreate
 ```
-oc set probe dc/simple-liberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
-oc set probe dc/simple-liberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
-oc patch dc/simple-liberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
+oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
+oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 ```
+
+6. open application : 
+```
+oc get route openliberty-app
+```
+
+
+# DEPRECATED : OpenShift v4.2+ -> CI-CD with Jenkins Pipeline 
+
+Prerequisites : 
+- Create new CI project : env-ci and DEV project : env-dev
+- Deploy OCP Jenkins template in project : env-ci
+- Allow jenkins SA to make deploys on other projects
+
+OC commands:
+
+1. create projects :
+```
+oc new-project env-ci
+oc new-project env-dev
+oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
+```
+
+2. create build configuration resurce in OpenShift : 
+```
+oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml  -n env-ci
+```
+
+3. create secret for GitHub integration : 
+```
+oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
+```
+
+4. add WebHook to GitHub from Settings -> WebHook : 
+
+![Webhook](./ci-cd-pipeline/webhook.jpg?raw=true "Webhook") 
+
+
+5. start pipeline build or push files into GitHub repo : 
+```
+oc start-build bc/liberty-pipeline-ci-cd -n env-ci
+```
+
+6. get routes for simple-nodejs-app : 
+```
+oc get routes/liberty-jenkins -n env-dev
+```
+
+7. inspect build :
+
+![Jenkins](./ci-cd-pipeline/jenkins.jpg?raw=true "Jenkins") 
