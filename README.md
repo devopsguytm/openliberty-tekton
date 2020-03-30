@@ -297,6 +297,7 @@ oc delete all -l app=simple-liberty-app
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd openliberty-tekton
+mvn clean package -
 oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
 ```
 
@@ -312,10 +313,14 @@ oc expose svc/openliberty-app
 oc label dc/openliberty-app app.kubernetes.io/name=java
 ```
 
-
 5.  set readiness and livness probes , and change deploy strategy to Recreate
 ```
 oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
 oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
 oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+```
+
+6. open application from 
+```
+oc get route liberty-app
 ```
