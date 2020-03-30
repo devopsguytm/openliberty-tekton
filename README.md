@@ -295,6 +295,8 @@ oc delete all -l app=simple-liberty-app
 
 2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
 ```
+git clone https://github.com/vladsancira/openliberty-tekton.git
+cd openliberty-tekton
 oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=simple-liberty-app --binary=true --strategy=source 
 ```
 
