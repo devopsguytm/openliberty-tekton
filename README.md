@@ -243,8 +243,8 @@ OC commands:
 
 1.  delete all resources
 ```
-oc delete all -l build=simple-liberty-app
-oc delete all -l app=simple-liberty-app
+oc delete all -l build=liberty-app
+oc delete all -l app=liberty-app
 ```
 
 2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and image stram
