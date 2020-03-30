@@ -243,8 +243,8 @@ OC commands:
 
 1.  delete all resources
 ```
-oc delete all -l build=liberty-app
-oc delete all -l app=liberty-app
+oc delete all -l build=openliberty-app
+oc delete all -l app=openliberty-app
 ```
 
 2.  create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and imagestream
@@ -264,7 +264,7 @@ oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
 ```
 oc new-app -i openliberty-app:latest
 oc expose svc/openliberty-app
-oc label dc/openliberty-app app.kubernetes.io/name=java
+oc label dc/openliberty-app app.kubernetes.io/name=java --overwrite
 ```
 
 5.  set readiness and livness probes , and change deploy strategy to Recreate
@@ -274,7 +274,7 @@ oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-del
 oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 ```
 
-6. open application from 
+6. open application : 
 ```
 oc get route openliberty-app
 ```
