@@ -92,7 +92,7 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml    -n env-ci
 ```
 
-4. create <API_KEY> for IBM Cloud and export PullImage secret from default namespace :
+4. create <API_KEY> for IBM Cloud Registry and export PullImage secret from default namespace :
 ```
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
@@ -130,21 +130,9 @@ kubectl get nodes -o wide
 
 http://<CLUSTER_IP>>:32427/health
 
-9. install Tekton Dashboard :
-```
-kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekton-pipelines
-```
-
-http://<CLUSTER_IP>>:32428/#/pipelineruns
-
-
 
 
 # IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
-
-
-Tekton Trigers, Bindings & EventListeners :
 
 [https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
 [https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)
@@ -154,35 +142,33 @@ Example :
 [https://github.com/tektoncd/triggers/tree/master/examples](https://github.com/tektoncd/triggers/tree/master/examples)
 
 
-1. install Tekton Triggers :
-official release -> [https://github.com/tektoncd/triggers/blob/master/docs/install.md](https://github.com/tektoncd/triggers/blob/master/docs/install.md)
+1. install Tekton Dashboard and triggers :
 ```
-kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
-kubectl get pods --namespace tekton-pipelines
-````
+kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
+kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+```
 
 2. create ServiceAccount, Role and RoleBinding  :
 ```
-kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml         -n env-ci
-kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-binding-webhook.yaml -n env-ci
+kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/webhook-service-account.yaml  -n env-ci
 ```
 
 3. create Pipeline's trigger_template, trigger_binding & event_listener :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/pipeline-run-webhook.yaml -n env-ci 
-kubectl get svc  -n env-ci 
-kubectl get pods -n env-ci 
-kubectl get nodes -o wide
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekton-pipelines
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n env-ci 
 ```
+
+http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 4. delete old pipelinerun :
 ```
-kubectl delete pipelinerun liberty-pipeline-run -n env-ci
+kubectl delete pipelinerun nodejs-pipeline-run -n env-ci
 ```
 
 5. forward K8S 8080 port to localhost:8080
 ```
-kubectl port-forward $(kubectl get pod -o=name -l eventlistener=liberty-pipeline-listener -n env-ci) 8080 -n env-ci
+kubectl port-forward $(kubectl get pod -o=name -l eventlistener=nodejs-pipeline-listener -n env-ci) 8080 -n env-ci
 ```
 
 6. perform a CURL post :
@@ -198,14 +184,14 @@ curl -X POST \
 	},
 	"repository":
 	{
-		"url": "https://github.com/vladsancira/openliberty-tekton.git"
+		"url": "https://github.com/vladsancira/nodejs-tekton.git"
 	}
 }'
 ```
 
 7. watch pipeline run execution and event listener logs:
 ```
-kubectl logs el-liberty-pipeline-listener-7c77666cf7-hzkbf -n env-ci -f
+kubectl logs el-nodejs-pipeline-listener-7c77666cf7-hzkbf -n env-ci -f
 kubectl get pipelinerun -n env-ci -w
 tkn pr ls -n env-ci
 ```
