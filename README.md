@@ -4,21 +4,19 @@
 
 [Java Application details](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
-Authors Service APIs - > [http://simple-liberty-app-ci-development.apps.us-west-1.starter.openshift-online.com/openapi/ui/](http://simple-liberty-app-ci-development.apps.us-west-1.starter.openshift-online.com/openapi/ui/)
 
-`.s2i/bin`               folder contains custom s2i scripts for assembling and running the application image.
+`.s2i/bin`               folder contains custom s2i scripts for assembling and running the application image for OpenShift v4.
 
-`.m2/settings.xml`       folder contains custom Maven settings.xml config file.
+`.m2/settings.xml`       custom Maven settings.xml config file (optional).
 
-`liberty-config`         folder contains the Open Liberty server.xml config file.
-
-`openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the build config with pipeline strategy.
-
-`openshift-tekton`       folder contains the OpenShift pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
-
-`kubernetes-tekton`      folder contains the Kubernetes pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
+`liberty-config`         folder contains the Open Liberty server.xml config file that will be copied to OpenLiberty image.
 
 
+`openshift-tekton`       folder contains the yamls for creating the Tekton Pipeline, Tasks and Resources in OpenShift 4.3
+
+`kubernetes-tekton`      folder contains the yamls for creating the Tekton Pipeline, Tasks and Resources in Kubernetes 1.16
+
+`openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the OpenShift BuildConfig with Jenkins Pipeline strategy.
 
 
 # OpenShift v4.3+ -> CI-CD with OpenShift Pipelines 
