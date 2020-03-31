@@ -18,6 +18,7 @@ In order to run these workshops, you need an [IBM Cloud account](https://cloud.i
 
 [Java Application details created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
+
 **Content**
 
 * `.s2i/bin`               folder contains custom s2i scripts for assembling and running the application image for OpenShift v4.
@@ -36,7 +37,9 @@ In order to run these workshops, you need an [IBM Cloud account](https://cloud.i
 
 ---
 
-## OpenShift 4.3 : CI-CD with OpenShift Pipelines Operator 
+![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
+
+## Continuous Integration - Continuous Delivery with Tekton Pipelines 
 
 **Prerequisites**
  
@@ -76,8 +79,6 @@ oc create -f ci-cd-pipeline/openshift-tekton/task-deploy.yaml      -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
 ```
 
-![Pipeline Run](images/pipeline.jpg?raw=true "Pipeline Run") 
-
 2. execute pipeline
 ```
 tkn t ls -n env-ci
@@ -85,13 +86,12 @@ tkn p ls -n env-ci
 tkn p start liberty-pipeline -n env-ci
 ```
 
-3. check application
-
-![Pipeline Run](./images/deployment.jpg?raw=true "Pipeline Run")
+![Pipeline Run](images/pipeline.jpg?raw=true "Pipeline Run") 
 
 ---
 
-## IBM Kubernetes 1.16 : CI-CD with Tekton Pipelines 
+![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
+## Continuous Integration - Continuous Delivery with Tekton Pipelines 
 
 **Prerequisites**
 
@@ -164,7 +164,7 @@ http://<CLUSTER_IP>>:32427/health
 
 ---
 
-## IBM Kubernetes 1.16 : Create Tekton WebHooks for Git
+##Create Tekton Pipeline WebHooks for Git
 
 **Architecture**
 
@@ -215,8 +215,8 @@ kubectl get nodes -o wide
 
 
 ---
-
-## OpenShift v4 : Create application image using S2I (source to image) and deploy it 
+![IBM](images/ocp2.png?raw=true "IBM") 
+## Create application image using S2I (source to image) and deploy it 
 
 **Steps for creating the Pipeline and WebHook**
 
@@ -264,7 +264,8 @@ oc get route openliberty-app
 
 ---
 
-## DEPRECATED : OpenShift v4.2 : CI-CD with Jenkins Pipeline 
+![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/jenkins2.jpg?raw=true "IBM")
+## DEPRECATED : Continuous Integration - Continuous Delivery with Jenkins Pipelines 
 
 **Prerequisites**
 
