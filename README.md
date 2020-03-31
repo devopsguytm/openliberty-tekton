@@ -1,4 +1,4 @@
-# Tekton, OpenShift and K8S on IBM Cloud
+# OpenShift, K8S and Tekton on IBM Cloud
 
 ![IBM](./images/os-logo.jpg?raw=true "IBM")
 
@@ -44,16 +44,16 @@ In order to run these tutorials, you need an [IBM Cloud account](https://cloud.i
 **Prerequisites**
  
 - Install OpenShift Pipeline Operator
-- Create CI and DEV Projects
+- Create `env-ci` and `env-dev` Projects
 ```
 oc new-project env-ci
 oc new-project env-dev
 ```  
-- Create Image Stream `nodejs-tekton` for storing NodeJS image
+- Create ImageStream `nodejs-tekton` for storing NodeJS Image
 ```
 oc create is nodejs-tekton -n env-dev
 ``` 
-- Allow pipeline SA to make deploys on other projects
+- Allow `pipeline` ServiceAccount to make deploys on other projects
 ```
 oc create serviceaccount pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
@@ -64,13 +64,13 @@ oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env
 
 **Steps for creating the CI-CD pipeline**
 
-0. clone git project
+0. Clone Git project
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd nodejs-tekton
 ```
 
-1. create Tekton resources , taks and pipeline
+1. Create Tekton Resources , Taks and Pipeline
 ```
 oc create -f ci-cd-pipeline/openshift-tekton/resources.yaml        -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/task-build-s2i.yaml   -n env-ci
@@ -79,7 +79,7 @@ oc create -f ci-cd-pipeline/openshift-tekton/task-deploy.yaml      -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
 ```
 
-2. execute pipeline
+2. Execute Pipeline
 ```
 tkn t ls -n env-ci
 tkn p ls -n env-ci
@@ -95,19 +95,19 @@ tkn p start liberty-pipeline -n env-ci
 
 **Prerequisites**
 
-- Clone git project
+- Clone Git project
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd nodejs-tekton
 ```
 
-- Install Tekton pipelines in default `tekton-pipelines` namespace :
+- Install Tekton Pipelines in default `tekton-pipelines` Namespace :
 ```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
 kubectl get pods --namespace tekton-pipelines
 ```
 
-- Create new `env-dev` and `env-ci` namespaces :
+- Create new `env-dev` and `env-ci` Namespaces :
 ```
 kubectl create namespace env-dev
 kubectl create namespace env-ci
@@ -134,7 +134,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -
 **Steps for creating the CI-CD pipeline**
 
 
-1. create Tekton resources , taks and pipeline:
+1. Create Tekton Resources , Taks and Pipeline:
 ```
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml   -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml  -n env-ci
@@ -142,19 +142,19 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml    -n env-ci
 ```
 
-2. execute pipeline via Pipeline Run and watch :
+2. Execute Pipeline via PipelineRun and watch :
 ```
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline-run.yaml -n env-ci
 kubectl get pipelinerun -n env-ci -w
 ```
 
-3. check pods and logs :
+3. Check Pods and logs :
 ```
 kubectl get pods                             -n env-dev
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
-4. open browser with cluster IP and port 32427 :
+4. Open Browser with cluster IP and port 32427 :
 get Cluster Public IP :
 ```
 kubectl get nodes -o wide
@@ -203,7 +203,7 @@ kubectl get svc el-liberty-pipeline-listener -n env-ci
 kubectl get nodes -o wide 
 ``` 
 
-4. Add 'http://<CLUSTER_IP>>:<EVENT_LISTNER_PORT>' to GitHib as WebHook. Then perform a push.
+4. Add 'http://<CLUSTER_IP>>:<EVENT_LISTNER_PORT>' to GitHib as WebHook. Then perform a push
 
 ![Webhook](./images/webhook-tekton.jpg?raw=true "Webhook") 
 
@@ -225,7 +225,7 @@ oc delete all -l build=openliberty-app
 oc delete all -l app=openliberty-app
 ```
 
-2.  Create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and imagestream
+2.  Create new s2i BuildConfig based on openliberty/open-liberty-s2i:19.0.0.12 and ImageStream
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd openliberty-tekton
@@ -233,12 +233,12 @@ mvn clean package
 oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
 ```
 
-3.  Create application image from srouce
+3.  Create application Image from source
 ```
 oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
 ```
 
-4.  Create application based on imagestreamtag : openliberty-app:latest
+4.  Create application based on ImageStreamTag : openliberty-app:latest
 ```
 oc new-app -i openliberty-app:latest
 oc expose svc/openliberty-app
@@ -251,12 +251,12 @@ oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --init
 oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
 oc patch dc/openliberty-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 ```
-FYI : a new deploy will start as DC has an deployconfig change trigger. To check triggers :
+FYI : a new deploy will start as the DeploymentConfig has a change trigger set by default. To check DeploymentConfig triggers :
 ```
 oc set triggers dc/nodejs-app
 ```
 
-6.  Open application 
+6.  Open application url
 ```
 oc get route openliberty-app
 ```
