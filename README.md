@@ -18,9 +18,13 @@ In order to run these tutorials, you need an [IBM Cloud account](https://cloud.i
 
 **Resources**
 
-* [Open Liberty image compatible with OpenShift](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
+* [S2I Build Task from OpenShift catalog](https://github.com/openshift/pipelines-catalog)
 
-* [Java Application details created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
+* [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
+
+* [Open Liberty Image compatible with OpenShift](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
+
+* [Java Application created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
 
 **Content**
@@ -280,7 +284,7 @@ oc new-project env-ci
 oc new-project env-dev
 ```
 - Deploy OCP Jenkins template in project `env-ci`
-- Allow `jenkins` ServiceAccount to make deploys on other projects
+- Allow `jenkins` ServiceAccount to make deploys on other Projects
 ```
 oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
