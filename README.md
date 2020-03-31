@@ -1,4 +1,4 @@
-# OpenShift on IBM Cloud Workshops
+# OpenShift on IBM Cloud with Tekton and Jenkins
 
 ![IBM](./images/os_logo.png?raw=true "IBM")
 
