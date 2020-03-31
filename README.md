@@ -14,6 +14,8 @@ In order to run these tutorials, you need an [IBM Cloud account](https://cloud.i
 
 ## Deploy OpenLiberty Application using Tekton Pipelines
 
+**Resources**
+
 [Open Liberty image compatible with OpenShift](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
 
 [Java Application details created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
