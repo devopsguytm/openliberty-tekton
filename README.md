@@ -1,4 +1,4 @@
-# OpenShift and K8S on IBM Cloud with Tekton and Jenkins
+# Tekton, OpenShift and K8S on IBM Cloud
 
 ![IBM](./images/os-logo.jpg?raw=true "IBM")
 
@@ -265,6 +265,8 @@ oc get route openliberty-app
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/jenkins2.jpg?raw=true "IBM")
 ## DEPRECATED : Continuous Integration - Continuous Delivery with Jenkins Pipelines 
+
+**You can still use the Jenkinsfile inside a Jenkins container.**
 
 **Prerequisites**
 
