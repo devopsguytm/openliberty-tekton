@@ -1,0 +1,14 @@
+{
+	"id": "ApiKey-13520b60-b13d-4415-a902-012fe1f6b9ed",
+	"crn": "crn:v1:bluemix:public:iam-identity::a/be715bf40863463faae285f0035ea347F-2059890F::apikey:ApiKey-13520b60-b13d-4415-a902-012fe1f6b9ed",
+	"iam_id": "IBMid-5500062NTV",
+	"account_id": "be715bf40863463faae285f0035ea347",
+	"name": "new-k9s-key",
+	"description": "this is my API key for demo",
+	"apikey": "8O3NYzuhgUtul3MSN7n8BhkUyC1TxZG-G7ExT7rQP_T1",
+	"locked": false,
+	"entity_tag": "1-6f07b29f88ea875a199ac4bea5d9ea18",
+	"created_at": "2020-03-31T08:47+0000",
+	"created_by": "IBMid-5500062NTV",
+	"modified_at": "2020-03-31T08:47+0000"
+}
