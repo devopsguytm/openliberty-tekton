@@ -276,38 +276,38 @@ oc new-project env-ci
 oc new-project env-dev
 ```
 - Deploy OCP Jenkins template in project `env-ci`
-- Allow jenkins SA to make deploys on other projects
+- Allow `jenkins` ServiceAccount to make deploys on other projects
 ```
 oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
 **Steps**
 
-1. create BuildConifg resource in OpenShift : 
+1. Create BuildConifg resource in OpenShift : 
 ```
 oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml  -n env-ci
 ```
 
-2. create secret for GitHub integration : 
+2. Create secret for GitHub integration : 
 ```
 oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
-3. add WebHook to GitHub from Settings -> WebHook : 
+3. Add WebHook to GitHub from Settings -> WebHook : 
 
 ![Webhook](images/webhook.jpg?raw=true "Webhook") 
 
 
-4. start pipeline build or push files into GitHub repo : 
+4. Start pipeline build or push files into GitHub repo : 
 ```
 oc start-build bc/liberty-pipeline-ci-cd -n env-ci
 ```
 
-5. get routes for simple-nodejs-app : 
+5. Get Route for liberty-jenkins : 
 ```
 oc get routes/liberty-jenkins -n env-dev
 ```
 
-6. inspect build :
+6. Inspect build :
 
 ![Jenkins](images/jenkins.jpg?raw=true "Jenkins") 
