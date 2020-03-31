@@ -164,9 +164,8 @@ http://<CLUSTER_IP>>:32427/health
 
 ---
 
-##Create Tekton Pipeline WebHooks for Git
 
-**Architecture**
+**Create Tekton Pipeline WebHooks for Git - Architecture**
 
 ![Tekton Architecture](./images/architecture.jpg?raw=true "Tekton Architecture")
 
