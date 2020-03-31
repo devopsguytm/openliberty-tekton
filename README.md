@@ -1,6 +1,6 @@
 # OpenShift on IBM Cloud with Tekton and Jenkins
 
-![IBM](./images/os_logo.png?raw=true "IBM")
+![IBM](./images/os-logo.jpg?raw=true "IBM")
 
 [Red Hat OpenShift on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-why_openshift) is an extension of the IBM Cloud Kubernetes Service, where IBM manages OpenShift Container Platform for you. 
 
