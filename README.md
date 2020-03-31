@@ -27,7 +27,7 @@ In order to run these tutorials, you need an [IBM Cloud account](https://cloud.i
 * [Java Application created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
 
-**Content**
+**Repository Content**
 
 * `.s2i/bin`               folder contains custom s2i scripts for assembling and running the application image for OpenShift v4.
 
