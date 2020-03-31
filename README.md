@@ -1,4 +1,4 @@
-# OpenShift on IBM Cloud with Tekton and Jenkins
+# OpenShift and K8S on IBM Cloud with Tekton and Jenkins
 
 ![IBM](./images/os-logo.jpg?raw=true "IBM")
 
