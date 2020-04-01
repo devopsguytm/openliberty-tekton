@@ -14,9 +14,20 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: liberty-image
+  name: liberty-image-dev
 spec:
   type: image
   params:
     - name: url
       value: image-registry.openshift-image-registry.svc:5000/env-dev/liberty-tekton
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: liberty-image-stage
+spec:
+  type: image
+  params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/env-stage/liberty-tekton

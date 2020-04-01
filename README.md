@@ -69,12 +69,11 @@ oc new-project env-stage
 ```  
 - Create Image Stream `nodejs-tekton` for storing NodeJS image
 ```
-oc create is nodejs-tekton -n env-dev
-oc create is nodejs-tekton -n env-stage
+oc create is liberty-tekton -n env-dev
+oc create is liberty-tekton -n env-stage
 ``` 
 - Allow pipeline SA to make deploys on other projects
 ```
-oc create serviceaccount pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-dev
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-stage
@@ -95,7 +94,7 @@ oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env
 0. clone git project
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
-cd nodejs-tekton
+cd openliberty-tekton
 ```
 
 1. create Tekton resources , taks and pipeline

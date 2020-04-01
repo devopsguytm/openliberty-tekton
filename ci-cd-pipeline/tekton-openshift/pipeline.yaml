@@ -6,7 +6,9 @@ spec:
   resources:
     - name: liberty-git
       type: git
-    - name: liberty-image
+    - name: liberty-image-dev
+      type: image
+    - name: liberty-image-stage
       type: image
 
   params:
@@ -21,7 +23,7 @@ spec:
       default: 'env-dev'     
     - name: PROMOTE_PROJECT
       description: The project where you promote the app
-      default: 'env-test'
+      default: 'env-stage'
 
   tasks:
   - name: build
@@ -33,17 +35,7 @@ spec:
           resource: liberty-git
       outputs:
         - name: image
-          resource: liberty-image
-
-  - name: test
-    taskRef:
-      name: test-liberty-app
-    runAfter:
-      - build  
-    resources:
-      inputs:
-        - name: source
-          resource: liberty-git
+          resource: liberty-image-dev
 
   - name: deploy
     taskRef:
@@ -60,7 +52,17 @@ spec:
     resources:
       inputs:
         - name: image
-          resource: liberty-image
+          resource: liberty-image-dev
+
+  - name: test
+    taskRef:
+      name: test-liberty-app
+    runAfter:
+      - build
+    resources:
+      inputs:
+        - name: source
+          resource: liberty-git
 
   - name: promote
     taskRef:
@@ -79,4 +81,7 @@ spec:
     resources:
       inputs:
         - name: image
-          resource: liberty-image
+          resource: liberty-image-dev
+      outputs:
+        - name: image
+          resource: liberty-image-stage
