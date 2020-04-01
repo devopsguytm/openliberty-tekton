@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: liberty-pipeline-run
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    name: liberty-pipeline
+  resources:
+    - name: liberty-git
+      resourceRef:
+        name: liberty-git
+    - name: liberty-image-dev
+      resourceRef:
+        name: liberty-image-dev
+    - name: liberty-image-stage
+      resourceRef:
+        name: liberty-image-stage
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      value: 'env-dev'
+    - name: PROMOTE_ENVIRONMENT
+      value: 'env-stage'

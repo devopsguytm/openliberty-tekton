@@ -1,0 +1,61 @@
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: liberty-pipeline-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: liberty-pipeline-trigger
+      bindings:
+        - name: liberty-pipeline-binding
+      template:
+        name: liberty-pipeline-template
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: liberty-pipeline-binding
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: gitrepositoryurl
+      value: $(body.repository.url)
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: liberty-pipeline-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: liberty-pipeline-run-$(params.gitrevision)
+      spec:
+        serviceAccountName: pipeline
+        pipelineRef:
+          name: liberty-pipeline
+        resources:
+          - name: liberty-git
+            resourceRef:
+              name: liberty-git
+          - name: liberty-image-dev
+            resourceRef:
+              name: liberty-image-dev
+          - name: liberty-image-stage
+            resourceRef:
+              name: liberty-image-stage
+        params:
+          - name: DEPLOY_ENVIRONMENT
+            value: 'env-dev'
+          - name: PROMOTE_ENVIRONMENT
+            value: 'env-stage'

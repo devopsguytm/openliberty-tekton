@@ -206,15 +206,38 @@ http://<CLUSTER_IP>>:32427/health
 ---
 
 
-## 3. Create a Webhook connection
+## 3. Create a WebHook connection
 
 
 In order to create a webhook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
 Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
-More information can be found in the  [TektonCD Triggers Project](https://github.com/tektoncd/triggers)
+More information can be found in the  [TektonCD Triggers Project](https://github.com/tektoncd/triggers). Also we can use Tekton Dashboard as a web console for viewing all Tekton Resources. 
+
+On OpenShift 4.3 , [TektonCD Triggers](https://github.com/tektoncd/triggers) are already installed as part of the [OpenShift Pipelines Operator](https://www.openshift.com/learn/topics/pipelines),  in `openshift-pipelines` project (namespace), but Tekton Dashboard is not installed. Instead,  we can use the OpenShift Pipeline Web Console.
+
+The mechanism for triggering builds via WebHooks is the same and involves creating an EventListener and exposing that EventListener Service to outside.
 
 ![Tekton Architecture](./images/webhook-architecture-tekton-simple.jpg?raw=true "Tekton Architecture")
 
+
+**For OpenShift we need to**
+----
+
+* create Pipeline's trigger_template, trigger_binding & event_listener
+
+```
+oc create -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-openshift.yaml -n env-ci 
+```
+* create a Route for the event_listener service
+```
+oc expose svc/el-liberty-pipeline-listener -n env-ci
+oc get route -n env-ci
+```
+*  add this route to out Git WebHook
+
+
+**For Kubernetes we need to**  
+----
 
 0. Install Tekton Dashboard and Tekton Triggers
 ```
@@ -232,7 +255,7 @@ kubectl apply  -f ci-cd-pipeline/tekton-triggers/webhook-service-account.yaml  -
 **by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster**
 
 ```
-kubectl apply -f ci-cd-pipeline/tekton-triggers/webhook-event-listener.yaml -n env-ci 
+kubectl apply -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-kubernetes.yaml -n env-ci 
 ```
 
 3. Get el-nodejs-pipeline-listener PORT and cluster EXTERNAL-IP
