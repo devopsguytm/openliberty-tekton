@@ -1,0 +1,72 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: liberty-pipeline
+spec:
+  resources:
+    - name: liberty-git
+      type: git
+    - name: liberty-image-dev
+      type: image
+    - name: liberty-image-stage
+      type: image
+
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      description: The environment where you deploy the app
+      default: 'env-dev'
+    - name: PROMOTE_ENVIRONMENT
+      description: The environment where you deploy the app
+      default: 'env-stage'
+
+  tasks:
+    - name: build
+      taskRef:
+        name: build-liberty-app
+      resources:
+        inputs:
+          - name: source
+            resource: liberty-git
+        outputs:
+          - name: image
+            resource: liberty-image-dev
+
+    - name: deploy
+      taskRef:
+        name: deploy-liberty-app
+      runAfter:
+        - build
+      params:
+        - name: DEPLOY_ENVIRONMENT
+          value: "$(params.DEPLOY_ENVIRONMENT)"
+      resources:
+        inputs:
+          - name: source
+            resource: liberty-git
+
+    - name: test
+      taskRef:
+        name: test-liberty-app
+      runAfter:
+        - deploy
+      params:
+        - name: DEPLOY_ENVIRONMENT
+          value: "$(params.DEPLOY_ENVIRONMENT)"
+
+    - name: promote
+      taskRef:
+        name: promote-liberty-app
+      runAfter:
+        - test
+      params:
+        - name: PROMOTE_ENVIRONMENT
+          value: "$(params.PROMOTE_ENVIRONMENT)"
+      resources:
+        inputs:
+          - name: source
+            resource: liberty-git
+          - name: image
+            resource: liberty-image-dev
+        outputs:
+          - name: image
+            resource: liberty-image-stage

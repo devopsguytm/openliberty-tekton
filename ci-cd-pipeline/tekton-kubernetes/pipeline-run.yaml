@@ -10,9 +10,14 @@ spec:
     - name: liberty-git
       resourceRef:
         name: liberty-git
-    - name: liberty-image
+    - name: liberty-image-dev
       resourceRef:
-        name: liberty-image
+        name: liberty-image-dev
+    - name: liberty-image-stage
+      resourceRef:
+        name: liberty-image-stage
   params:
     - name: DEPLOY_ENVIRONMENT
       value: 'env-dev'
+    - name: PROMOTE_ENVIRONMENT
+      value: 'env-stage'

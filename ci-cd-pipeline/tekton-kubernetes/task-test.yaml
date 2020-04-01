@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: test-liberty-app
+spec:
+  inputs:
+    params:
+      - name: DEPLOY_ENVIRONMENT
+        description: The environment where you deploy the app
+        default: 'env-dev'
+        type: string
+  steps:
+    - name: test-image
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
+      args:
+        - "get"
+        - "pod"
+        - "-n"
+        - "$(inputs.params.DEPLOY_ENVIRONMENT)"

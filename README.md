@@ -14,55 +14,83 @@ In order to run these workshops, you need an [IBM Cloud account](https://cloud.i
 
 ## Deploy OpenLiberty Application using Tekton Pipelines
 
+**Tutorials**
+
+* [Create a Cloud-native CI/CD Pipeline on OpenShift 4.3](#1-cloud-native-cicd-pipeline-on-openshift)
+
+* [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#2-cloud-native-cicd-pipeline-on-kubernetes)
+
+* [Create a WebHook connection from Git to our CI/CD Pipeline](#3-create-a-webhook-connection)
+
+* [OpenShift & S2I (Source to Image) - build and deploy an OpenLiberty application](#4-openshift-source-to-image)
+
+* [Create a Jenkins CI/CD Pipeline on OpenShift 4.2](#5-deprecated--jenkins-cicd-pipeline-on-openshift)
+
+
+**Resources**
+
 [Open Liberty image compatible with OpenShift](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
 
 [Java Application details created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
 
-**Content**
+**Repository Content**
 
-* `.s2i/bin`               folder contains custom s2i scripts for assembling and running the application image for OpenShift v4.
+* `.s2i/bin`                folder contains custom s2i scripts for assembling and running the application image for OpenShift v4.
 
-* `.m2/settings.xml`       custom Maven settings.xml config file (optional).
+* `.m2/settings.xml`        custom Maven settings.xml config file (optional).
 
-* `liberty-config`         folder contains the Open Liberty server.xml config file that will be copied to OpenLiberty image.
+* `liberty-config`          folder contains the Open Liberty server.xml config file that will be copied to OpenLiberty image.
 
-* `ci-cd-pipeline`          folder contains pipelines implementation for different targets.
+* `ci-cd-pipeline   `       folder contains pipeline implementation for different targets.
 
-* `openshift-tekton`       folder contains the yamls for creating the Tekton Pipeline, Tasks and Resources in OpenShift 4.3
+* `tekton-openshift `       folder contains the [OpenShift Pipelines](https://www.openshift.com/learn/topics/pipelines) implementation and yamls.
 
-* `kubernetes-tekton`      folder contains the yamls for creating the Tekton Pipeline, Tasks and Resources in Kubernetes 1.16
+* `tekton-kubernetes`       folder contains the [Kubernetes Pipelines](https://github.com/tektoncd/pipeline) implementation and yaml.
 
-* `openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the OpenShift BuildConfig with Jenkins Pipeline strategy.
+* `tekton-triggers  `       folder contains the implementation for [Tekton Triggers](https://github.com/tektoncd/triggers) for creating a Git WebHook.
 
+* `jenkins-openshift`       folder contains the Jenkins Pipeline implementation (Jenkinsfile) and yaml for creating the BuildConfig with pipeline strategy.
 ---
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## Continuous Integration - Continuous Delivery with Tekton Pipelines 
+## 1. Cloud native CI/CD Pipeline on OpenShift
 
 **Prerequisites**
+----
  
 - Install OpenShift Pipeline Operator
 - Create CI and DEV Projects
 ```
 oc new-project env-ci
 oc new-project env-dev
+oc new-project env-stage
 ```  
 - Create Image Stream `nodejs-tekton` for storing NodeJS image
 ```
 oc create is nodejs-tekton -n env-dev
+oc create is nodejs-tekton -n env-stage
 ``` 
 - Allow pipeline SA to make deploys on other projects
 ```
 oc create serviceaccount pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-dev
+oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-stage
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-dev
+oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-stage
 ```
 
-**Steps for creating the CI-CD pipeline**
+**Pipeline design**
+----
+
+![Pipeline Design](images/pipeline-design-openshift-simple.jpg?raw=true "Pipeline Design")
+
+
+**Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
+----
 
 0. clone git project
 ```
@@ -72,11 +100,12 @@ cd nodejs-tekton
 
 1. create Tekton resources , taks and pipeline
 ```
-oc create -f ci-cd-pipeline/openshift-tekton/resources.yaml        -n env-ci
-oc create -f ci-cd-pipeline/openshift-tekton/task-build-s2i.yaml   -n env-ci
-oc create -f ci-cd-pipeline/openshift-tekton/task-test.yaml        -n env-ci
-oc create -f ci-cd-pipeline/openshift-tekton/task-deploy.yaml      -n env-ci
-oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
+oc create -f ci-cd-pipeline/tekton-openshift/resources.yaml        -n env-ci
+oc create -f ci-cd-pipeline/tekton-openshift/task-build-s2i.yaml   -n env-ci
+oc create -f ci-cd-pipeline/tekton-openshift/task-deploy.yaml      -n env-ci
+oc create -f ci-cd-pipeline/tekton-openshift/task-test.yaml        -n env-ci
+oc create -f ci-cd-pipeline/tekton-openshift/task-promote.yaml     -n env-ci
+oc create -f ci-cd-pipeline/tekton-openshift/pipeline.yaml         -n env-ci
 ```
 
 2. execute pipeline
@@ -91,9 +120,11 @@ tkn p start liberty-pipeline -n env-ci
 ---
 
 ![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
-## Continuous Integration - Continuous Delivery with Tekton Pipelines 
+
+## 2. Cloud native CI/CD Pipeline on Kubernetes
 
 **Prerequisites**
+----
 
 - Clone git project
 ```
@@ -109,6 +140,7 @@ kubectl get pods --namespace tekton-pipelines
 
 - Create new `env-dev` and `env-ci` namespaces :
 ```
+kubectl create namespace env-stage
 kubectl create namespace env-dev
 kubectl create namespace env-ci
 ```
@@ -123,34 +155,44 @@ kubectl annotate secret ibm-cr-secret  -n env-ci tekton.dev/docker-0=us.icr.io
 
 kubectl get secret default-us-icr-io --export -o yaml > default-us-icr-io.yaml
 kubectl create -f  default-us-icr-io.yaml -n env-dev
+kubectl create -f  default-us-icr-io.yaml -n env-stage
 ```
 
 - Create Service Account to allow pipeline to run and deploy to `env-dev` namespace :
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml         -n env-ci
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -n env-dev
+kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account.yaml         -n env-ci
+kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -n env-dev
+kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -n env-stage
 ```
 
-**Steps for creating the CI-CD pipeline**
+**Pipeline design**
+----
 
+![Pipeline Design](images/pipeline-design-tekton-simple.jpg?raw=true "Pipeline Design")
+
+**Steps for creating the CI-CD pipeline**
+----
 
 1. create Tekton resources , taks and pipeline:
 ```
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml   -n env-ci
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build.yaml  -n env-ci
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml -n env-ci
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml    -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/resources.yaml          -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-build.yaml         -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-deploy.yaml        -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-test.yaml          -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-promote.yaml       -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/pipeline.yaml           -n env-ci
 ```
 
 2. execute pipeline via Pipeline Run and watch :
 ```
-kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline-run.yaml -n env-ci
+kubectl create -f ci-cd-pipeline/tekton-kubernetes/pipeline-run.yaml -n env-ci
 kubectl get pipelinerun -n env-ci -w
 ```
 
 3. check pods and logs :
 ```
 kubectl get pods                             -n env-dev
+kubectl get pods                             -n env-stage
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
@@ -165,36 +207,33 @@ http://<CLUSTER_IP>>:32427/health
 ---
 
 
-**Create Tekton Pipeline WebHooks for Git - Architecture**
-
-![Tekton Architecture](./images/architecture.jpg?raw=true "Tekton Architecture")
-
-[https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)<br>
-[https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)<br>
-[https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md](https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md)<br>
+## 3. Create a Webhook connection
 
 
-**Prerequisites**
+In order to create a webhook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
+Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
+More information can be found in the  [TektonCD Triggers Project](https://github.com/tektoncd/triggers)
 
-- Install Tekton Dashboard and Tekton Triggers
+![Tekton Architecture](./images/webhook-architecture-tekton-simple.jpg?raw=true "Tekton Architecture")
+
+
+0. Install Tekton Dashboard and Tekton Triggers
 ```
 kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
 kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekton-pipelines
+kubectl apply -f ci-cd-pipeline/tekton-triggers/tekton-dashboard.yaml -n tekton-pipelines
 ```
-
-**Steps for creating the WebHook**
 
 1. Create ServiceAccount, Role and RoleBinding 
 ```
-kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/webhook-service-account.yaml  -n env-ci
+kubectl apply  -f ci-cd-pipeline/tekton-triggers/webhook-service-account.yaml  -n env-ci
 ```
 
 2. Create Pipeline's trigger_template, trigger_binding & event_listener<br>
 **by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster**
 
 ```
-kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n env-ci 
+kubectl apply -f ci-cd-pipeline/tekton-triggers/webhook-event-listener.yaml -n env-ci 
 ```
 
 3. Get el-nodejs-pipeline-listener PORT and cluster EXTERNAL-IP
@@ -214,8 +253,10 @@ kubectl get nodes -o wide
 
 
 ---
+
 ![IBM](images/ocp2.png?raw=true "IBM") 
-## Create application image using S2I (source to image) and deploy it 
+
+## 4. OpenShift source to image
 
 **Steps for creating the Pipeline and WebHook**
 
@@ -264,7 +305,8 @@ oc get route openliberty-app
 ---
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/jenkins2.jpg?raw=true "IBM")
-## DEPRECATED : Continuous Integration - Continuous Delivery with Jenkins Pipelines 
+
+## 5. DEPRECATED : Jenkins CI/CD Pipeline on OpenShift 
 
 **Prerequisites**
 
@@ -283,7 +325,7 @@ oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 
 1. create BuildConifg resource in OpenShift : 
 ```
-oc create -f  ci-cd-pipeline/openshift-jenkins/liberty-ci-cd-pipeline.yaml  -n env-ci
+oc create -f  ci-cd-pipeline/jenkins-openshift/liberty-ci-cd-pipeline.yaml  -n env-ci
 ```
 
 2. create secret for GitHub integration : 
