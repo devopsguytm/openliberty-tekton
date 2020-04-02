@@ -35,14 +35,36 @@ spec:
          - name: shared-storage
            mountPath: /artefacts
 
-     - name: verify-code
-       image: alpine
+     - name: test-code
+       image: maven:3.6.3-ibmjava-8
        script: |
+         #!/usr/bin/env bash
+         set -xe
+         mvn --version
+         java -version
+         echo '-----------------------------------------------------'
+         mvn clean test -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         echo '-----------------------------------------------------'
          ls -l /artefacts/*
        volumeMounts:
          - name: shared-storage
            mountPath: /artefacts
-  
+
+     - name: deploy-to-nexus
+       image: maven:3.6.3-ibmjava-8
+       script: |
+         #!/usr/bin/env bash
+         set -xe
+         mvn --version
+         java -version
+         echo '-----------------------------------------------------'
+         mvn clean deploy -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         echo '-----------------------------------------------------'
+         ls -l /artefacts/*
+       volumeMounts:
+         - name: shared-storage
+           mountPath: /artefacts
+
      - name: create-image
        image: gcr.io/kaniko-project/executor
        command:

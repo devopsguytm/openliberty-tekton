@@ -22,6 +22,47 @@
 			<scope>provided</scope>
 			<type>pom</type>
 		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.6.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.6.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-runner</artifactId>
+			<version>1.6.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.json</groupId>
+			<artifactId>javax.json-api</artifactId>
+			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.json</artifactId>
+			<version>1.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -32,6 +73,11 @@
 		          <groupId>org.apache.maven.plugins</groupId>
 		          <artifactId>maven-deploy-plugin</artifactId>
 		          <version>2.8.2</version>
+			   </plugin>
+			   <plugin>
+				   <groupId>org.apache.maven.plugins</groupId>
+				   <artifactId>maven-surefire-plugin</artifactId>
+				   <version>3.0.0-M4</version>
 			   </plugin>
 		   </plugins>
 		</pluginManagement>
@@ -47,11 +93,11 @@
 	<distributionManagement>
 			<repository>
 				<id>ibm-cloud-repo-releases</id>
-				<url>http://159.122.175.116:32324/repository/ibm-cloud-repo-releases/</url>
+				<url>http://173.193.75.183:32324/repository/ibm-cloud-repo-releases/</url>
 			</repository>
 		    <snapshotRepository>
 			  <id>ibm-cloud-repo-snapshots</id>
-			  <url>http://159.122.175.116:32324/repository/ibm-cloud-repo-snapshots/</url>
+			  <url>http://173.193.75.183:32324/repository/ibm-cloud-repo-snapshots/</url>
 		    </snapshotRepository>
         </distributionManagement>
 

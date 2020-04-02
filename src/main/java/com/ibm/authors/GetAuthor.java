@@ -61,9 +61,8 @@ public class GetAuthor {
 			return Response.ok(this.createJson(author)).build();
 	}
 
-	private JsonObject createJson(Author author) {
-		JsonObject output = Json.createObjectBuilder().add("name", author.name).add("twitter", author.twitter)
+	public JsonObject createJson(Author author) {
+		return Json.createObjectBuilder().add("name", author.name).add("twitter", author.twitter)
 				.add("blog", author.blog).build();
-		return output;
 	}
 }
