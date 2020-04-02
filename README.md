@@ -6,11 +6,11 @@
 
 With Red Hat OpenShift on IBM Cloud developers have a fast and secure way to containerize and deploy enterprise workloads in Kubernetes clusters. OpenShift clusters build on Kubernetes container orchestration that offers consistency and flexibility for your development lifecycle operations.
 
-This repository holds a series of workshops that help you as a developer to become familiar with Red Hat OpenShift, how it can be deployed on the IBM Cloud, and how to deploy applications on and with OpenShift.
+This repository holds a series of tutorials that help you as a developer to become familiar with Cloud-native Continuous Integration / Continuous Delivery pipelines, Git webhooks, builds and deployments on Red Hat OpenShift 4.3 and K8S 1.16+ using Tekton Pipelines.
 
-In order to run these workshops, you need an [IBM Cloud account](https://cloud.ibm.com/registration).
+In order to run these tutorials, you need an [IBM Cloud account](https://cloud.ibm.com/registration).
 
----
+IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes and a free of license fee Red Hat OpenShift 4.3.5 beta cluster. Also, you recieve by default a free IBM Cloud Image Registry with 512MB storage and 5GB Pull Trafic each month. 
 
 ## Deploy OpenLiberty Application using Tekton Pipelines
 
