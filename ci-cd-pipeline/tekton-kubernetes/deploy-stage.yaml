@@ -30,9 +30,11 @@ spec:
       labels:
         app: liberty-app
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - name: liberty-app
         image: us.icr.io/cloud-images/liberty-app:stage
+        imagePullPolicy: Always
         ports:
         - containerPort: 9080
       imagePullSecrets:
