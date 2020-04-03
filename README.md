@@ -368,6 +368,7 @@ oc start-build bc/liberty-pipeline-ci-cd -n env-ci
 5. get routes for simple-nodejs-app : 
 ```
 oc get routes/liberty-jenkins -n env-dev
+oc get routes/liberty-jenkins -n env-stage
 ```
 
 6. inspect build :
