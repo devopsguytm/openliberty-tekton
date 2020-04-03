@@ -278,17 +278,12 @@ kubectl get nodes -o wide
 
 ![IBM](images/ocp2.png?raw=true "IBM") 
 
-## 4. OpenShift source to image
+## 4. OpenShift Source to Image
 
-**Steps for building ad deploying the application using s2i**
+**Steps for building and deploying the application using s2i**
 
-1.  Delete all resources
-```
-oc delete all -l build=openliberty-app
-oc delete all -l app=openliberty-app
-```
 
-2.  Create new s2i build config based on openliberty/open-liberty-s2i:19.0.0.12 and imagestream
+1.  Create a new s2i BuildConfig based on `openliberty/open-liberty-s2i:19.0.0.12`
 ```
 git clone https://github.com/vladsancira/openliberty-tekton.git
 cd openliberty-tekton
@@ -296,19 +291,19 @@ mvn clean package
 oc new-build openliberty/open-liberty-s2i:19.0.0.12 --name=openliberty-app --binary=true --strategy=source 
 ```
 
-3.  Create application image from srouce
+2.  Start the build by passing the current folder as input for the new BuildConfig
 ```
 oc start-build bc/openliberty-app --from-dir=. --wait=true --follow=true
 ```
 
-4.  Create application based on imagestreamtag : openliberty-app:latest
+3.  Create a new Application based on ImageStreamTag `openliberty-app:latest` from previous step. Then expose an external Route 
 ```
 oc new-app -i openliberty-app:latest
 oc expose svc/openliberty-app
 oc label dc/openliberty-app app.kubernetes.io/name=java --overwrite
 ```
 
-5.  Set readiness and livness probes , and change deploy strategy to Recreate
+4.  Set Readiness, Livness probes  and change deploy strategy to Recreate
 ```
 oc set probe dc/openliberty-app --readiness --get-url=http://:9080/health --initial-delay-seconds=60
 oc set probe dc/openliberty-app --liveness --get-url=http://:9080/ --initial-delay-seconds=60
@@ -319,9 +314,15 @@ FYI : a new deploy will start as DC has an deployconfig change trigger. To check
 oc set triggers dc/nodejs-app
 ```
 
-6.  Open application 
+5.  Open application 
 ```
 oc get route openliberty-app
+```
+
+6.  Delete all resources using Labels
+```
+oc delete all -l build=openliberty-app
+oc delete all -l app=openliberty-app
 ```
 
 ---
