@@ -280,7 +280,7 @@ kubectl get nodes -o wide
 
 ## 4. OpenShift source to image
 
-**Steps for creating the Pipeline and WebHook**
+**Steps for building ad deploying the application using s2i**
 
 1.  Delete all resources
 ```
