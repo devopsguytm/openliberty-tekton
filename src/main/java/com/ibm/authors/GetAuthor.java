@@ -58,6 +58,8 @@ public class GetAuthor {
 			author.twitter = "https://twitter.com/nheidloff";
 			author.blog = "http://heidloff.net";
 
+
+
 			return Response.ok(this.createJson(author)).build();
 	}
 
