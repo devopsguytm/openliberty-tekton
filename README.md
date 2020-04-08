@@ -4,9 +4,9 @@
 
 [Red Hat OpenShift on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-why_openshift) is an extension of the IBM Cloud Kubernetes Service, where IBM manages OpenShift Container Platform for you. 
 
-With Red Hat OpenShift on IBM Cloud developers have a fast and secure way to containerize and deploy enterprise workloads in Kubernetes clusters. OpenShift clusters build on Kubernetes container orchestration that offers consistency and flexibility for your development lifecycle operations.
+[Tekton Pipelines](https://github.com/tektoncd/pipeline) is an open source project used for creating cloud-native Continuous Integration / Continuous Delivery ( CI/CD ) pipelines that run on Kubernetes using custom resource definitions. Unlike Jenkins, Tekton Pipelines was build secificaly for container environments : run serverless, are container based and support the software lifecycle.
 
-This repository holds a series of tutorials that help you as a developer to become familiar with Continuous Integration / Continuous Delivery ( CI/CD ) pipelines, Git Webhooks, builds and deployments on Red Hat OpenShift 4.3 and K8S 1.16+ using Tekton Pipelines.
+This repository holds a series of tutorials that help you as a developer to become familiar with  Continuous Integration / Continuous Delivery ( CI/CD ) pipelines and Webhooks on Red Hat OpenShift 4.3 and K8S 1.16+ using Tekton Pipelines.
 
 
 IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes and a free of license fee Red Hat OpenShift 4.3.5 beta cluster. Also, you recieve by default a free IBM Cloud Image Registry with 512MB storage and 5GB Pull Trafic each month. 
@@ -25,7 +25,6 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 It should take you approximately 1-2 hours to provision the OpenShift / K8s clusters and to perform these tutorials.  
 
 ---
-
 
 # Cloud-native CI/CD Pipeline using Tekton 
 
@@ -225,9 +224,7 @@ http://<CLUSTER_IP>>:32427/health
 
 ---
 
-
 ## 3. Create a WebHook connection
-
 
 In order to create a WebHook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
 Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
