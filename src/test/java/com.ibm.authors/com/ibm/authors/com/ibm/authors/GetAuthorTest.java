@@ -1,13 +1,8 @@
-package com.ibm.authors;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import javax.json.Json;
 import javax.json.JsonObject;
-
 import static org.junit.jupiter.api.Assertions.*;
-
+import com.ibm.authors.*;
 
 
 class GetAuthorTest {
