@@ -19,6 +19,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 * Install and configure [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started#overview)
 * Connfigure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry)
 * Optional : download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the OpenLiberty project
+* Optional : create a free [LogDNA service on IBM Cloud](https://www.ibm.com/cloud/log-analysis) for log analysis
 
 ## Estimated time 
 
@@ -290,6 +291,22 @@ kubectl get nodes -o wide
 5. Open Tekton Dashboard  :  http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 ![Webhook](./images/dashboard.jpg?raw=true "Webhook") 
+
+---
+# LogDNA configuration 
+
+From IBM Cloud - Observability - Logging you can create a LogDNA Lite instance:
+
+![LogDNA](./images/logdna.png?raw=true "LogDNA") 
+
+LogDNA configuration for K8s and OpenShift is very simple: from "Edit log sources" run the two kubectl commands for setting up the LogDNA Agent Key and create the LogDNA agent in your K8s/OpenShift cluster. You can create the resources in any namspace:   
+
+* kubectl create secret generic logdna-agent-key --from-literal=logdna-agent-key=<SECRET_KEY>
+
+* kubectl create -f https://assets.eu-gb.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml
+
+
+All K8s/OpenShift logs are then visible in LogDNA Dashboard.
 
 ---
 
