@@ -67,9 +67,9 @@ spec:
           mvn clean package -f /workspace/source/pom.xml --settings /workspace/source/.m2/settings.xml
           echo '-----------------------------------------------------'
           mkdir /tmp/src/target
-          mkdir /tmp/src/liberty-config
-          cp /workspace/source/target/*.war         /tmp/src/target/
-          cp /workspace/source/src/main/liberty/config/*.xml /tmp/src/liberty-config/
+          mkdir -p /tmp/src/src/main/liberty/config
+          cp /workspace/source/target/*.war                  /tmp/src/target/
+          cp /workspace/source/src/main/liberty/config/*.xml /tmp/src/src/main/liberty/config/
           ls -lR /tmp/src/
       volumeMounts:
         - name: artefacts
