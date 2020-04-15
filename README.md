@@ -211,9 +211,13 @@ kubectl get pipelinerun -n env-ci -w
 3. Check Pods and logs :
 ```
 kubectl get pods                             -n env-dev
-kubectl get pods                             -n env-stage
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
+Optional : create Horizontal Pod Autoscaler :
+```
+kubectl autoscale deploy liberty-app  --min=1 --max=2 --cpu-percent=90 -n env-dev
+kubectl autoscale deploy liberty-app  --min=1 --max=2 --cpu-percent=90 -n env-stage
+``` 
 
 4. Open browser with cluster IP and port 32427 :
 get Cluster Public IP :
