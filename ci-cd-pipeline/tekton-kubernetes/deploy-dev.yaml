@@ -37,5 +37,18 @@ spec:
         imagePullPolicy: "Always"
         ports:
         - containerPort: 9080
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 9080
+          initialDelaySeconds: 60
+          periodSeconds: 60
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9080
+          initialDelaySeconds: 30
+          periodSeconds: 60 
       imagePullSecrets:
         - name: default-us-icr-io
+         
