@@ -35,7 +35,7 @@ It should take you approximately 1-2 hours to provision the OpenShift / K8s clus
 
 * [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#2-cloud-native-cicd-pipeline-on-kubernetes)
 
-* [Create a WebHook connection from Git to our CI/CD Pipeline](#3-create-a-webhook-connection)
+* [Create a WebHook connection from Git to our CI/CD Pipeline](#3-create-a-webhook-connection-from-a-git-repo)
 
 **Tekton Build Task Resources**
 
@@ -225,7 +225,7 @@ http://<CLUSTER_IP>>:32427/health
 
 ---
 
-## 3. Create a WebHook connection
+## 3. Create a WebHook connection from a Git repo
 
 In order to create a WebHook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
 Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
@@ -293,7 +293,17 @@ kubectl get nodes -o wide
 ![Webhook](./images/dashboard.jpg?raw=true "Webhook") 
 
 ---
-# LogDNA configuration 
+## Configure cleanup CronJob
+
+You can create a K8s CronJob for deleting the PipelineRun resources older than 1 week :
+
+* kubectl config set-context --current --namespace=env-ci
+* kubectl apply -f ci-cd-pipeline/tekton-cleanup/pipelinerun_cleanup_cronjob.yaml
+
+Now every week the `pipelinerun-cleanup` cronjob will perform a PipelineRun cleanup. 
+
+---
+## LogDNA configuration 
 
 From IBM Cloud - Observability - Logging you can create a LogDNA Lite instance:
 

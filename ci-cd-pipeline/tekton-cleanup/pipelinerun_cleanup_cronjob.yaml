@@ -1,0 +1,22 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: pipelinerun-cleanup
+  namespace: env-ci
+spec:
+  schedule: "0 8 * * 1" 
+  successfulJobsHistoryLimit: 2 
+  failedJobsHistoryLimit: 2 
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: pipeline-trigger-sa      
+          containers:
+          - name: tkn 
+            image: gcr.io/tekton-releases/dogfooding/tkn 
+            args:
+            - /bin/sh
+            - -c
+            - tkn pr ls | grep "1 week ago" | awk '{print $1}' | xargs tkn pr delete -f || true 
+          restartPolicy: OnFailure
