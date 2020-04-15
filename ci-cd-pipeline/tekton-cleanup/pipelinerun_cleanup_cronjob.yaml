@@ -4,7 +4,8 @@ metadata:
   name: pipelinerun-cleanup
   namespace: env-ci
 spec:
-  schedule: "0 8 * * 1" 
+  #schedule: "0 8 * * 1"
+  schedule: "* * * * *" 
   successfulJobsHistoryLimit: 2 
   failedJobsHistoryLimit: 2 
   jobTemplate:
@@ -18,5 +19,7 @@ spec:
             args:
             - /bin/sh
             - -c
-            - tkn pr ls | grep "1 week ago" | awk '{print $1}' | xargs tkn pr delete -f || true 
+            #- tkn pr ls | grep "1 week ago" | awk '{print $1}' | xargs tkn pr delete -f || true 
+            - tkn pr ls | grep liberty-pipeline-run | awk 'NR!=4{print $1}' | xargs tkn pr delete -f || true 
+            #- tkn pr ls | grep  nodejs-pipeline-run | awk 'NR!=4{print $1}' | xargs tkn pr delete -f || true 
           restartPolicy: OnFailure
