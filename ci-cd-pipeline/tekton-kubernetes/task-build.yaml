@@ -58,7 +58,7 @@ spec:
          mvn --version
          java -version
          echo '-----------------------------------------------------'
-         mvn clean deploy -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         #mvn clean deploy -f ./source/pom.xml --settings ./source/.m2/settings.xml
          echo '-----------------------------------------------------'
          ls -l /artefacts/*
        volumeMounts:

@@ -20,6 +20,6 @@ spec:
             - /bin/sh
             - -c
             #- tkn pr ls | grep "1 week ago" | awk '{print $1}' | xargs tkn pr delete -f || true 
-            - tkn pr ls | grep liberty-pipeline-run | awk 'NR!=4{print $1}' | xargs tkn pr delete -f || true 
-            #- tkn pr ls | grep  nodejs-pipeline-run | awk 'NR!=4{print $1}' | xargs tkn pr delete -f || true 
+            - tkn pr ls | grep liberty-pipeline-run | awk 'NR>4{print $1}' | xargs tkn pr delete -f || true 
+            - tkn pr ls | grep  nodejs-pipeline-run | awk 'NR>4{print $1}' | xargs tkn pr delete -f || true 
           restartPolicy: OnFailure
