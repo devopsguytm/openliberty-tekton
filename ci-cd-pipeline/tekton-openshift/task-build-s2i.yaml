@@ -69,7 +69,7 @@ spec:
           mkdir /tmp/src/target
           mkdir /tmp/src/liberty-config
           cp /workspace/source/target/*.war         /tmp/src/target/
-          cp /workspace/source/liberty-config/*.xml /tmp/src/liberty-config/
+          cp /workspace/source/src/main/liberty/config/*.xml /tmp/src/liberty-config/
           ls -lR /tmp/src/
       volumeMounts:
         - name: artefacts
