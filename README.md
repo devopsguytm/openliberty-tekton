@@ -297,8 +297,10 @@ kubectl get nodes -o wide
 
 You can create a K8s CronJob for deleting the PipelineRun resources older than 1 week :
 
-* kubectl config set-context --current --namespace=env-ci
-* kubectl apply -f ci-cd-pipeline/tekton-cleanup/pipelinerun_cleanup_cronjob.yaml
+```
+kubectl config set-context --current --namespace=env-ci
+kubectl apply -f ci-cd-pipeline/tekton-cleanup/pipelinerun_cleanup_cronjob.yaml
+```
 
 Now every week the `pipelinerun-cleanup` cronjob will perform a PipelineRun cleanup. 
 
@@ -311,10 +313,10 @@ From IBM Cloud - Observability - Logging you can create a LogDNA Lite instance:
 
 LogDNA configuration for K8s and OpenShift is very simple: from "Edit log sources" run the two kubectl commands for setting up the LogDNA Agent Key and create the LogDNA agent in your K8s/OpenShift cluster. You can create the resources in any namspace:   
 
-* kubectl create secret generic logdna-agent-key --from-literal=logdna-agent-key=<SECRET_KEY>
-
-* kubectl create -f https://assets.eu-gb.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml
-
+```
+kubectl create secret generic logdna-agent-key --from-literal=logdna-agent-key=<SECRET_KEY>
+kubectl create -f https://assets.eu-gb.logging.cloud.ibm.com/clients/logdna-agent-ds.yaml
+```
 
 All K8s/OpenShift logs are then visible in LogDNA Dashboard.
 
