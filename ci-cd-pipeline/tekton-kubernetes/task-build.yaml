@@ -30,7 +30,7 @@ spec:
          mvn clean package -f ./source/pom.xml --settings ./source/.m2/settings.xml
          echo '-----------------------------------------------------'         
          cp ./source/target/*.war         /artefacts/
-         cp ./source/liberty-config/*.xml /artefacts/
+         cp ./source/src/main/liberty/config/*.xml /artefacts/
        volumeMounts:
          - name: shared-storage
            mountPath: /artefacts

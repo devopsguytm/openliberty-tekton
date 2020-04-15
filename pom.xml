@@ -63,6 +63,13 @@
 			<version>1.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.openliberty</groupId>
+			<artifactId>openliberty-runtime</artifactId>
+			<version>19.0.0.12</version>
+			<type>zip</type>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -81,13 +88,55 @@
 			   </plugin>
 		   </plugins>
 		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<!-- Enable liberty-maven plugin -->
+			<plugin>
+				<groupId>io.openliberty.tools</groupId>
+				<artifactId>liberty-maven-plugin</artifactId>
+				<version>${version.liberty-maven-plugin}</version>
+				<configuration>
+					<serverName>sampleAppServer</serverName>
+				</configuration>
+			</plugin>
+			<!-- Plugin to run functional tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${version.maven-failsafe-plugin}</version>
+				<configuration>
+					<systemPropertyVariables>
+						<http.port>${liberty.var.default.http.port}</http.port>
+						<https.port>${liberty.var.default.https.port}</https.port>
+						<app.context.root>${liberty.var.app.context.root}</app.context.root>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<!-- Plugin versions -->
+		<version.liberty-maven-plugin>3.1</version.liberty-maven-plugin>
+		<version.maven-failsafe-plugin>2.22.2</version.maven-failsafe-plugin>
+		<version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin>
+		<!-- Liberty configuration -->
+		<liberty.var.default.http.port>9080</liberty.var.default.http.port>
+		<liberty.var.default.https.port>9443</liberty.var.default.https.port>
+		<liberty.var.app.context.root>/</liberty.var.app.context.root>
 	</properties>
 
 	<distributionManagement>
