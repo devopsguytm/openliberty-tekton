@@ -4,8 +4,7 @@ metadata:
   name: pipelinerun-cleanup
   namespace: env-ci
 spec:
-  #schedule: "0 8 * * 1"
-  schedule: "* * * * *" 
+  schedule: "0 8 * * *" 
   successfulJobsHistoryLimit: 2 
   failedJobsHistoryLimit: 2 
   jobTemplate:

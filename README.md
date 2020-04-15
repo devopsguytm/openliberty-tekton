@@ -295,14 +295,14 @@ kubectl get nodes -o wide
 ---
 ## Configure cleanup CronJob
 
-You can create a K8s CronJob for deleting the PipelineRun resources older than 1 week :
+You can create a K8s CronJob for deleting the PipelineRun resources that meet a specific criteria:
 
 ```
 kubectl config set-context --current --namespace=env-ci
 kubectl apply -f ci-cd-pipeline/tekton-cleanup/pipelinerun_cleanup_cronjob.yaml
 ```
 
-Now every week the `pipelinerun-cleanup` cronjob will perform a PipelineRun cleanup. 
+Now every day, the `pipelinerun-cleanup` cronjob will perform a PipelineRun cleanup. 
 
 ---
 ## LogDNA configuration 
