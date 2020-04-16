@@ -27,7 +27,11 @@ public class GetAuthor {
 	@APIResponses(value = {
 		@APIResponse(
 	      responseCode = "404",
-	      description = "Author Not Found"
+		  description = "Author Not Found",
+		  content = @Content(
+	        mediaType = "application/json",
+	        schema = @Schema(implementation = Error.class)
+	      )
 	    ),
 	    @APIResponse(
 	      responseCode = "200",
@@ -39,7 +43,11 @@ public class GetAuthor {
 	    ),
 	    @APIResponse(
 	      responseCode = "500",
-	      description = "Internal service error"  	      
+		  description = "Internal service error",
+		  content = @Content(
+	        mediaType = "application/json",
+	        schema = @Schema(implementation = Error.class)
+	      )  	      
 	    )
 	})
 	@Operation(
@@ -57,16 +65,32 @@ public class GetAuthor {
 			author.name = "Vlad Sancira";
 			author.twitter = "None";
 			author.blog = "https://github.com/vladsancira/";
+
+			Error notfound = new Error();
+			notfound.error="Author not found.";
+			notfound.code="404";
+
+			Error tooshort = new Error();
+			tooshort.error="Name too short. Minimum length is 3 characters.";
+			tooshort.code="500";
+				
 			
 			System.out.println("Request for name = "+name );
+
+			if (name.length()<3) {
+				System.out.println("Sending response :");
+				System.out.println(this.createJson(tooshort));	
+				return Response.ok(this.createJson(tooshort)).status(500).build();
+			}
 
 			if (author.name.toLowerCase().contains(name.toLowerCase())){
 				System.out.println("Sending response :");
 				System.out.println(this.createJson(author));
-				return Response.ok(this.createJson(author)).build();
+				return Response.ok(this.createJson(author)).status(200).build();
 			} else 	{
-				System.out.println("Error 404 - Author not found.");
-				return Response.status(404).build();
+				System.out.println("Sending response :");
+				System.out.println(this.createJson(notfound));				
+				return Response.ok(this.createJson(notfound)).status(404).build();
 			}				
 			
 	}
@@ -74,5 +98,10 @@ public class GetAuthor {
 	public JsonObject createJson(Author author) {
 		return Json.createObjectBuilder().add("name", author.name).add("twitter", author.twitter)
 				.add("blog", author.blog).build();
+	}
+
+	public JsonObject createJson(Error error) {
+		return Json.createObjectBuilder().add("description", error.error).add("code", error.code)
+				.build();
 	}
 }
