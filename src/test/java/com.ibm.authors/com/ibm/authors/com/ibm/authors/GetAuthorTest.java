@@ -12,9 +12,9 @@ class GetAuthorTest {
     void testCreateJson() {
 
         Author author = new Author();
-        author.name = "Niklas Heidloff";
-        author.twitter = "https://twitter.com/nheidloff";
-        author.blog = "http://heidloff.net";
+        author.name = "Vlad Sancira";
+        author.twitter = "none";
+        author.blog = "https://github.com/vladsancira/";
 
         GetAuthor getAuthor = new GetAuthor();
 

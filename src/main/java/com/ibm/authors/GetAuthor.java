@@ -49,18 +49,26 @@ public class GetAuthor {
 	public Response getAuthor(@Parameter(
             description = "The unique name of the author",
             required = true,
-            example = "Niklas Heidloff",
+            example = "Vlad Sancira",
             schema = @Schema(type = SchemaType.STRING))
 			@QueryParam("name") String name) {
 		
 			Author author = new Author();
-			author.name = "Niklas Heidloff";
-			author.twitter = "https://twitter.com/nheidloff";
-			author.blog = "http://heidloff.net";
+			author.name = "Vlad Sancira";
+			author.twitter = "None";
+			author.blog = "https://github.com/vladsancira/";
+			
+			System.out.println("Request for name = "+name );
 
-
-
-			return Response.ok(this.createJson(author)).build();
+			if (author.name.toLowerCase().contains(name.toLowerCase())){
+				System.out.println("Sending response :");
+				System.out.println(this.createJson(author));
+				return Response.ok(this.createJson(author)).build();
+			} else 	{
+				System.out.println("Error 404 - Author not found.");
+				return Response.status(404).build();
+			}				
+			
 	}
 
 	public JsonObject createJson(Author author) {
