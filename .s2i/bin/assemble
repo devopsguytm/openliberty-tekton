@@ -7,7 +7,7 @@ echo "----------------------------------------------------------"
 echo check config artefacts
 ls -l /tmp/src/src/main/liberty/config/*.xml
 echo "----------------------------------------------------------"
-echo copy  war files to dropins
+echo copy war files to dropins
 cp /tmp/src/target/*.war /config/dropins/
 echo "----------------------------------------------------------"
 echo copy config files to config

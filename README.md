@@ -55,17 +55,17 @@ Using Tekton Pipelines involves building the application image inside the OpenSh
 
 **Repository Content**
 
-* `.s2i/bin`                folder contains custom s2i scripts for assembling and running the application image for OpenShift v4.
+* `.s2i/bin`                - folder contains custom s2i scripts for assembling and running the application image for OpenShift v4. When s2i build is performed, the whole repository content is upload as binary imput for the OpenShift build. There, the repository is mounted as a volume in mountPath `/tmp/src/`.
 
-* `.m2/settings.xml`        custom Maven settings.xml config file (optional).
-
-* `liberty-config`          folder contains the Open Liberty server.xml config file that will be copied to OpenLiberty image.
+* `.m2/settings.xml`        - optional custom Maven settings.xml config file.
 
 * `tekton-openshift `       - contains the [OpenShift Pipeline](https://www.openshift.com/learn/topics/pipelines) implementation and yaml resources.
 
 * `tekton-kubernetes`       - contains the [Kubernetes Pipeline](https://github.com/tektoncd/pipeline) implementation and yaml resources.
 
-* `tekton-triggers  `       - contains the[Tekton Triggers](https://github.com/tektoncd/triggers) implementation for creating a Git WebHook to OpenShift / K8s.
+* `tekton-triggers  `       - contains the [Tekton Triggers](https://github.com/tektoncd/triggers) implementation for creating a Git WebHook to OpenShift / K8s.
+
+* `tekton-cleanup  `        - contains the [Tekton Triggers](https://github.com/tektoncd/triggers)  cleanup K8s `CronJob`.
 
 
 ---
