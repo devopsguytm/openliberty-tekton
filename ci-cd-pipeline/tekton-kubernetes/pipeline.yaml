@@ -15,9 +15,11 @@ spec:
     - name: DEPLOY_ENVIRONMENT
       description: The environment where you deploy the app
       default: 'env-dev'
+      type: string
     - name: PROMOTE_ENVIRONMENT
       description: The environment where you deploy the app
       default: 'env-stage'
+      type: string
 
   tasks:
     - name: build

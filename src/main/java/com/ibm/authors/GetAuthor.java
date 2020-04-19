@@ -17,11 +17,16 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import javax.json.Json;
+import java.util.Base64;
+import java.nio.charset.StandardCharsets;
+
 
 @ApplicationScoped
 @Path("/getauthor")
 @OpenAPIDefinition(info = @Info(title = "Authors Service", version = "1.0", description = "Authors Service APIs", contact = @Contact(url = "https://github.com/nheidloff/cloud-native-starter", name = "Niklas Heidloff"), license = @License(name = "License", url = "https://github.com/nheidloff/cloud-native-starter/blob/master/LICENSE")))
 public class GetAuthor {
+
+	private static final String validapikey="anaaremeresipere";
 
 	@GET
 	@APIResponses(value = {
@@ -59,36 +64,48 @@ public class GetAuthor {
             required = true,
             example = "Vlad Sancira",
             schema = @Schema(type = SchemaType.STRING))
-			@QueryParam("name") String name) {
+			@QueryParam("name") String name,
+			@Parameter(
+            description = "The API KEY",
+            required = true,
+            example = "YW5hYXJlbWVyZXNpcGVyZQ==",
+            schema = @Schema(type = SchemaType.STRING))
+			@QueryParam("apikey") String apikey
+			){
+
+			Author author  = new Author("Vlad Sancira","none","https://github.com/vladsancira/");
+			Error notfound = new Error("Author not found.","404");
+			Error tooshort = new Error("Name too short. Minimum length is 3 characters.","500");
+			Error noapikey = new Error("Invalid API KEY.","500");		
 		
-			Author author = new Author();
-			author.name = "Vlad Sancira";
-			author.twitter = "None";
-			author.blog = "https://github.com/vladsancira/";
+			String decodeAPIKEY;
 
-			Error notfound = new Error();
-			notfound.error="Author not found.";
-			notfound.code="404";
+			try {
+				decodeAPIKEY = new String(Base64.getDecoder().decode(apikey.getBytes()), StandardCharsets.UTF_8);
+			} catch (Exception e){
+				decodeAPIKEY = "invalid";
+			}	
 
-			Error tooshort = new Error();
-			tooshort.error="Name too short. Minimum length is 3 characters.";
-			tooshort.code="500";
-				
-			
+			if ( ! validapikey.equalsIgnoreCase(decodeAPIKEY)) {
+				System.out.println("Sending 500 response :");
+				System.out.println(this.createJson(noapikey));	
+				return Response.ok(this.createJson(noapikey)).status(500).build();
+			}
+
 			System.out.println("Request for name = "+name );
 
 			if (name.length()<3) {
-				System.out.println("Sending response :");
+				System.out.println("Sending 500 response :");
 				System.out.println(this.createJson(tooshort));	
 				return Response.ok(this.createJson(tooshort)).status(500).build();
-			}
+			}						
 
 			if (author.name.toLowerCase().contains(name.toLowerCase())){
-				System.out.println("Sending response :");
+				System.out.println("Sending 200 response :");				
 				System.out.println(this.createJson(author));
 				return Response.ok(this.createJson(author)).status(200).build();
 			} else 	{
-				System.out.println("Sending response :");
+				System.out.println("Sending 404 response :");
 				System.out.println(this.createJson(notfound));				
 				return Response.ok(this.createJson(notfound)).status(404).build();
 			}				
@@ -104,4 +121,5 @@ public class GetAuthor {
 		return Json.createObjectBuilder().add("description", error.error).add("code", error.code)
 				.build();
 	}
+	
 }
