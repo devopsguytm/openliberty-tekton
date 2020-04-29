@@ -11,10 +11,7 @@ class GetAuthorTest {
     @DisplayName("should return the json format")
     void testCreateJson() {
 
-        Author author = new Author();
-        author.name = "Vlad Sancira";
-        author.twitter = "none";
-        author.blog = "https://github.com/vladsancira/";
+        Author author = new Author("Vlad Sancira","none","https://github.com/vladsancira/");
 
         GetAuthor getAuthor = new GetAuthor();
 

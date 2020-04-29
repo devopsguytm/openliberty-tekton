@@ -101,6 +101,7 @@
 				   </executions>
 				   <configuration>
 					   <repository>tekton-demo/openliberty-author</repository>
+					   <dockerfile>src/main/liberty/docker/Dockerfile</dockerfile>
 					   <tag>${project.version}</tag>
 					   <buildArgs>
 						   <WAR_FILE>${project.build.finalName}.war</WAR_FILE>
