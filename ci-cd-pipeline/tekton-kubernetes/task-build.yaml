@@ -3,31 +3,35 @@ kind: Task
 metadata:
   name: build-liberty-app
 spec:
-
   inputs:
     resources:
       - name: source
         type: git
-
   outputs:
     resources:
       - name: image
         type: image
-
   volumes:
       - name: shared-storage
         emptyDir: {}
-         
+  stepTemplate:       
+    env:
+      - name: "HTTPS_PROXY"
+        value: "http://10.7.17.17:8080"
+      - name: "HTTP_PROXY"
+        value: "http://10.7.17.17:8080"
+      - name: "NO_PROXY"
+        value: "localhost,127.0.0.1,.amsit.dev,10.7.0.0/16"     
   steps:
      - name: build-code
-       image: maven:3.6.3-ibmjava-8
+       image: maven:3.6.3-ibmjava-8       
        script: |
          #!/usr/bin/env bash
          set -xe
          mvn --version 
          java -version
          echo '-----------------------------------------------------'
-         mvn clean package -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         mvn clean package -f ./source/pom.xml --settings ./source/.m2/settings.xml -Dhttps.proxyHost=10.7.17.17 -Dhttp.proxyHost=10.7.17.17 -Dhttp.proxyPort=8080 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost,127.0.0.1,.amsit.dev,10.7.0.0/16
          echo '-----------------------------------------------------'         
          cp ./source/target/*.war         /artefacts/
          cp ./source/src/main/liberty/config/*.xml /artefacts/
@@ -43,7 +47,7 @@ spec:
          mvn --version
          java -version
          echo '-----------------------------------------------------'
-         mvn clean test -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         mvn clean test -f ./source/pom.xml --settings ./source/.m2/settings.xml -Dhttps.proxyHost=10.7.17.17 -Dhttp.proxyHost=10.7.17.17 -Dhttp.proxyPort=8080 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost,127.0.0.1,.amsit.dev,10.7.0.0/16
          echo '-----------------------------------------------------'
          ls -l /artefacts/*
        volumeMounts:
@@ -58,7 +62,7 @@ spec:
          mvn --version
          java -version
          echo '-----------------------------------------------------'
-         #mvn clean deploy -f ./source/pom.xml --settings ./source/.m2/settings.xml
+         #mvn clean deploy -f ./source/pom.xml --settings ./source/.m2/settings.xml -Dhttps.proxyHost=10.7.17.17 -Dhttp.proxyHost=10.7.17.17 -Dhttp.proxyPort=8080 -Dhttps.proxyPort=8080 -Dhttp.nonProxyHosts=localhost,127.0.0.1,.amsit.dev,10.7.0.0/16
          echo '-----------------------------------------------------'
          ls -l /artefacts/*
        volumeMounts:

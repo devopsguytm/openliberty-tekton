@@ -6,3 +6,16 @@ target
 .settings/org.eclipse.jdt.core.prefs
 /authors.iml
 /.idea/
+ci-cd-pipeline/.DS_Store
+ci-cd-pipeline/tekton-kubernetes/.DS_Store
+ci-cd-pipeline/tekton-openshift/.DS_Store
+images/.DS_Store
+src/.DS_Store
+src/main/.DS_Store
+src/main/java/.DS_Store
+src/main/java/com/.DS_Store
+src/main/java/com/ibm/.DS_Store
+src/main/liberty/.DS_Store
+src/test/java/.DS_Store
+.DS_Store
+.settings/org.eclipse.m2e.core.prefs

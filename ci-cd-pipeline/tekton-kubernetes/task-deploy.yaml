@@ -11,8 +11,8 @@ spec:
       - name: DEPLOY_ENVIRONMENT
         description: The environment where you deploy the app
         default: 'env-dev'
-        type: string
-  steps:
+        type: string  
+  steps: 
     - name: deploy-resources
       image: lachlanevenson/k8s-kubectl
       command: ["kubectl"]
