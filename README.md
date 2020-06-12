@@ -37,6 +37,10 @@ It should take you approximately 1-2 hours to provision the OpenShift / K8s clus
 
 * [Create a WebHook connection from Git to our CI/CD Pipeline](#3-create-a-webhook-connection-from-a-git-repo)
 
+* [Create a cleanup job for CI/CD Pipelines](#4-configure-cleanup-cronjob)
+
+* [Configure a Logging mechanism for K8s cluster](#5-logdna-configuration)
+
 **Tekton Build Task Resources**
 
 Using Tekton Pipelines involves building the application image inside the OpenShift / Kubernetes cluster. For this on OpenShift we use the standard S2I Build task from RedHat and for Kubernetes we use the Kaniko Build task. 
@@ -67,7 +71,32 @@ Using Tekton Pipelines involves building the application image inside the OpenSh
 
 * `tekton-cleanup  `        - contains the [Tekton Triggers](https://github.com/tektoncd/triggers)  cleanup K8s `CronJob`.
 
+---
+## Run the OpenLiberty application locally
+```
+# 1. start docker 
 
+# 2. from repo root folder run 
+
+mvn --settings=.m2/settings.xml clean package dockerfile:build
+
+# 3. check docker image is created 
+
+docker images | grep author
+
+# 4. run application image 
+
+docker run -p 9080:9080 -e ENVIRONMENT=DEV tekton-demo/openliberty-author:1.1-SNAPSHOT
+
+# 5. check application health 
+
+curl http://localhost:9080/health
+
+# 6. test API via curl or open in browser : http://localhost:9080/openapi/ui/
+
+curl -X GET "http://localhost:9080/api/v1/getauthor?name=Vlad%20Sancira&apikey=YW5hYXJlbWVyZXNpcGVyZQ%3D%3D" -H "accept: application/json"
+
+```
 ---
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
@@ -297,7 +326,7 @@ kubectl get nodes -o wide
 ![Webhook](./images/dashboard.jpg?raw=true "Webhook") 
 
 ---
-## Configure cleanup CronJob
+## 4. Configure cleanup CronJob 
 
 You can create a K8s CronJob for deleting the PipelineRun resources that meet a specific criteria:
 
@@ -309,7 +338,7 @@ kubectl apply -f ci-cd-pipeline/tekton-cleanup/pipelinerun_cleanup_cronjob.yaml
 Now every day, the `pipelinerun-cleanup` cronjob will perform a PipelineRun cleanup. 
 
 ---
-## LogDNA configuration 
+## 5. LogDNA configuration 
 
 From IBM Cloud - Observability - Logging you can create a LogDNA Lite instance:
 

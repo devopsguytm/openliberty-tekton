@@ -34,6 +34,9 @@ spec:
       containers:
       - name: liberty-app
         image: us.icr.io/cloud-images/liberty-app:latest
+        env:
+          - name: ENVIRONMENT
+            value: "DEV"
         imagePullPolicy: "Always"
         ports:
         - containerPort: 9080
