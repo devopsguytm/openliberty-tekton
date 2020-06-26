@@ -35,9 +35,9 @@ It should take you approximately 1 hour to provision the OpenShift / K8s cluster
 
 ## Steps
 
-* [Create a Cloud-native CI/CD Pipeline on OpenShift 4.3](#cloud-native-cicd-pipeline-on-openshift)
+* [Create a Cloud-native CI/CD Pipeline on OpenShift 4.3](#cloud-native-cicd-pipeline-on-openshift-43)
 
-* [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#cloud-native-cicd-pipeline-on-kubernetes)
+* [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#cloud-native-cicd-pipeline-on-kubernetes-117)
 
 * [Create a WebHook connection from Git to our CI/CD Pipeline](#create-a-webhook-connection-from-a-git-repo)
 
@@ -95,7 +95,7 @@ curl -X GET "http://localhost:9080/api/v1/getauthor?name=Vlad%20Sancira&apikey=Y
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## Cloud native CI/CD Pipeline on OpenShift
+## Cloud native CI/CD Pipeline on OpenShift 4.3
 
 `OpenShift Pipelines` is a cloud-native, continuous integration and continuous delivery (CI/CD) solution based on Kubernetes resources. It uses Tekton building blocks to automate deployments across multiple platforms by abstracting away the underlying implementation details. Tekton introduces a number of standard Custom Resource Definitions (CRDs) for defining CI/CD pipelines that are portable across Kubernetes distributions.
 
@@ -175,7 +175,7 @@ openliberty-pipeline-run-4fe564430272f1ea78cad   15 hours ago   2 minutes   Succ
 
 ![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## Cloud native CI/CD Pipeline on Kubernetes
+## Cloud native CI/CD Pipeline on Kubernetes 1.17
 
 The Tekton Pipelines project provides k8s-style resources for declaring CI/CD-style pipelines.
 
