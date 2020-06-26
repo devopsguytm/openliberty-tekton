@@ -35,30 +35,19 @@ It should take you approximately 1 hour to provision the OpenShift / K8s cluster
 
 ## Steps
 
-* [Create a Cloud-native CI/CD Pipeline on OpenShift 4.3](#1-cloud-native-cicd-pipeline-on-openshift)
+* [Create a Cloud-native CI/CD Pipeline on OpenShift 4.3](#cloud-native-cicd-pipeline-on-openshift)
 
-* [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#2-cloud-native-cicd-pipeline-on-kubernetes)
+* [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#cloud-native-cicd-pipeline-on-kubernetes)
 
-* [Create a WebHook connection from Git to our CI/CD Pipeline](#3-create-a-webhook-connection-from-a-git-repo)
+* [Create a WebHook connection from Git to our CI/CD Pipeline](#create-a-webhook-connection-from-a-git-repo)
 
-* [Create a cleanup job for CI/CD Pipelines](#4-configure-cleanup-cronjob)
+* [Create a cleanup job for CI/CD Pipelines](#configure-cleanup-cronjob)
 
-* [Configure a Logging mechanism for K8s cluster](#5-logdna-configuration)
-
-
-Before you get started, it’s important to understand how the application image is built. Using Tekton Pipelines involves building the application image inside the OpenShift/Kubernetes cluster. When using OpenShift, you use the standard [S2I Build task](https://github.com/openshift/pipelines-catalog) and for Kubernetes you use the [Kaniko Build task](https://github.com/tektoncd/catalog/tree/master/kaniko). 
+* [Configure a Logging mechanism for K8s cluster](#logdna-configuration)
 
 
-* [S2I Build Task from OpenShift Catalog](https://github.com/openshift/pipelines-catalog)
+Before you get started, it’s important to understand how the application image is built. Using Tekton Pipelines involves building the application image inside the OpenShift/Kubernetes cluster. When using OpenShift, you use the standard [S2I Build task](https://github.com/openshift/pipelines-catalog) and for Kubernetes you use the [Kaniko Build task](https://github.com/tektoncd/catalog/tree/master/kaniko). For OpenShift you need to use an [Open Liberty image compatible](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags). Application is based on the [Java Application created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
-* [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
-
-* [Open Liberty image compatible with OpenShift](https://hub.docker.com/r/openliberty/open-liberty-s2i/tags)
-
-
-**Other Resources**
-
-* [Java Application details created by N. Heidloff ](https://github.com/nheidloff/openshift-on-ibm-cloud-workshops/blob/master/2-deploying-to-openshift/documentation/3-java.md#lab-3---understanding-the-java-implementation)
 
 
 It’s also important to know what each Git folder contains: 
@@ -106,7 +95,12 @@ curl -X GET "http://localhost:9080/api/v1/getauthor?name=Vlad%20Sancira&apikey=Y
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## 1. Cloud native CI/CD Pipeline on OpenShift
+## Cloud native CI/CD Pipeline on OpenShift
+
+`OpenShift Pipelines` is a cloud-native, continuous integration and continuous delivery (CI/CD) solution based on Kubernetes resources. It uses Tekton building blocks to automate deployments across multiple platforms by abstracting away the underlying implementation details. Tekton introduces a number of standard Custom Resource Definitions (CRDs) for defining CI/CD pipelines that are portable across Kubernetes distributions.
+
+More information can be found here:
+https://docs.openshift.com/container-platform/4.4/pipelines/understanding-openshift-pipelines.html
 
 ## Prerequisites for creating the Tekton CI/CD pipeline
 ----
@@ -181,7 +175,7 @@ openliberty-pipeline-run-4fe564430272f1ea78cad   15 hours ago   2 minutes   Succ
 
 ![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## 2. Cloud native CI/CD Pipeline on Kubernetes
+## Cloud native CI/CD Pipeline on Kubernetes
 
 The Tekton Pipelines project provides k8s-style resources for declaring CI/CD-style pipelines.
 
@@ -274,12 +268,12 @@ kubectl get nodes -o wide
 ```
 Then open following URL in a Browser to view the OpenLiberty application UI :
 - from `DEV` environment:  `http://<EXTERNAL-IP>:32427/health`
-- from `STAGE` environment:  `http://<EXTERNAL-IP>:32527/nodejs`
+- from `STAGE` environment:  `http://<EXTERNAL-IP>:32527/health`
 
 ---
 
 
-## 3. Create a WebHook connection from a Git repo
+## Create a WebHook connection from a Git repo
 
 In order to create a WebHook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
 Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
@@ -347,7 +341,7 @@ kubectl get nodes -o wide
 
 
 ---
-## 4. Configure cleanup CronJob 
+## Configure cleanup CronJob 
 
 You can create a K8s CronJob for deleting the PipelineRun resources that meet a specific criteria:
 
@@ -359,7 +353,7 @@ kubectl apply -f ci-cd-pipeline/tekton-cleanup/pipelinerun_cleanup_cronjob.yaml
 Now every day, the `pipelinerun-cleanup` cronjob will perform a PipelineRun cleanup. 
 
 ---
-## 5. LogDNA configuration 
+## LogDNA configuration 
 
 From IBM Cloud - Observability - Logging you can create a LogDNA Lite instance:
 
