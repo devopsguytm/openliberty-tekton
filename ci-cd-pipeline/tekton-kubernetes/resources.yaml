@@ -19,7 +19,7 @@ spec:
   type: image
   params:
     - name: url
-      value: us.icr.io/cloud-images/liberty-app:latest 
+      value: us.icr.io/tekton-pipeline-pp/liberty-app:latest 
 ---
 
 apiVersion: tekton.dev/v1alpha1
@@ -30,4 +30,4 @@ spec:
   type: image
   params:
     - name: url
-      value: us.icr.io/cloud-images/liberty-app:stage
+      value: us.icr.io/tekton-pipeline-pp/liberty-app:stage
