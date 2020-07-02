@@ -9,8 +9,6 @@ spec:
       value: master
     - name: url
       value: https://github.com/vladsancira/openliberty-tekton.git
-    - name: httpsProxy
-      value: "10.7.17.17:8080"  
 ---
 
 apiVersion: tekton.dev/v1alpha1
