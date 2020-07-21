@@ -33,7 +33,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: liberty-app
-        image: us.icr.io/cloud-images/liberty-app:stage
+        image: us.icr.io/eggerh/liberty-app:stage
         env:
           - name: ENVIRONMENT
             value: "STAGE"
